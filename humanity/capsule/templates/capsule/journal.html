@@ -1,0 +1,8 @@
+{% extends "capsule/layout.html" %}
+
+{% block title%} Journal {% endblock %}
+
+{% block body %}
+    <h1>This is your journal</h1>
+    <a href="{% url 'capsule:add_entry' %}">Add a journal entry</a>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link href="{% static 'capsule/favicon.ico' %}" rel="icon">
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+        <link href="{% static 'capsule/styles.css' %}" rel="stylesheet">
+        <title>
+            {% block title %}
+            {% endblock %}
+        </title>
+    </head>
+    <body>
+        <!-- Navigation bar to switch between pages, taken from Bootstrap -->
+        <nav class="navbar fixed-bottom navbar-light bg-light">
+            <a class="navbar-brand" href="{% url 'capsule:index' %}">Time Capsule</a>
+            <a class="navbar-brand" href="{% url 'capsule:journal' %}">Journal</a>
+            <a class="navbar-brand" href="{% url 'capsule:goals' %}">Goals</a>
+            <a class="navbar-brand" href="{% url 'capsule:notes' %}">Notes</a>
+        </nav>
+        {% block body%}
+        {% endblock %}
+    </body>
+</html>
