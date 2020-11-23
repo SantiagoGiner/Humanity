@@ -4,5 +4,11 @@
 
 {% block body %}
     <h1>This is your journal</h1>
+    <ol>
+        {% for entry in entries %}
+            {% url 'capsule:view_entry' entry.id as url %}
+            <li><a href="{{ url }}">{{ entry }}</a></li>
+        {% endfor %}
+    </ol>
     <a href="{% url 'capsule:add_entry' %}">Add a journal entry</a>
 {% endblock %}

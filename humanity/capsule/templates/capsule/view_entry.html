@@ -1,0 +1,9 @@
+{% extends "capsule/layout.html" %}
+
+{% block title%} Journal Entry {% endblock %}
+
+{% block body %}
+    <h1>Journal entry from {{ entry.date }}:</h1>
+    <p>{{ entry.entry }}</p>
+    <a href="{% url 'capsule:journal' %}">Back to journal</a>
+{% endblock %}
