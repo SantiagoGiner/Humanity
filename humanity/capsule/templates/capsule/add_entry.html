@@ -1,13 +1,14 @@
 {% extends "capsule/layout.html" %}
+{% load crispy_forms_tags %}
 
 {% block title%} Add Journal Entry {% endblock %}
 
 {% block body %} 
     <h1>What's been on your mind?...</h1>
-    <form action="{% url 'capsule:add_entry' %}" method="post">
+    <form class="form-group" action="{% url 'capsule:add_entry' %}" method="post">
         {% csrf_token %}
-        <input autocomplete="" autofocus id="journal_entry" name="journal_entry" placeholder="entry" type="text">
-        <input type="submit">
+        {{ form | crispy}}
+        <button class="btn btn-success" type="submit">Add journal entry</button>
         <a href="{% url 'capsule:journal' %}">Back to journal</a>
     </form>
 {% endblock %}

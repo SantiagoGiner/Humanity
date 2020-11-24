@@ -1,0 +1,14 @@
+{% extends "capsule/layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block title%} Login {% endblock %}
+
+{% block body %}
+    <h1>User Login</h1>
+    <form class="form-group" action="{% url 'capsule:login' %}" method="post">
+        {% csrf_token %}
+        {{ form | crispy}}
+        <button class="btn btn-success" type="submit">Login</button>
+        <p>Don't have an account? <a href="{% url 'capsule:register' %}">Create One</a></p>
+    </form>
+{% endblock %}

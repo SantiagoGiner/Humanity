@@ -16,12 +16,27 @@
     <body>
         <!-- Navigation bar to switch between pages, taken from Bootstrap -->
         <nav class="navbar fixed-bottom navbar-light bg-light">
-            <a class="navbar-brand" href="{% url 'capsule:index' %}">Time Capsule</a>
-            <a class="navbar-brand" href="{% url 'capsule:journal' %}">Journal</a>
-            <a class="navbar-brand" href="{% url 'capsule:goals' %}">Goals</a>
-            <a class="navbar-brand" href="{% url 'capsule:notes' %}">Notes</a>
+            {% if user.is_authenticated %}
+                <a class="navbar-brand" href="{% url 'capsule:index' %}">Home</a>
+                <a class="navbar-brand" href="{% url 'capsule:journal' %}">Journal</a>
+                <a class="navbar-brand" href="{% url 'capsule:goals' %}">Goals</a>
+                <a class="navbar-brand" href="{% url 'capsule:notes' %}">Notes</a>
+                <a class="navbar-brand" href="{% url 'capsule:logout' %}">Log Out</a>
+            {% else %}
+            <a class="navbar-brand" href="{% url 'capsule:register' %}">Register</a>
+            <a class="navbar-brand" href="{% url 'capsule:login' %}">Login</a>
+            {% endif %}
         </nav>
-        {% block body%}
-        {% endblock %}
+        {% if messages %}
+            <header>
+                {% for message in messages %}
+                    <div {% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+                {% endfor %}
+            </header>
+        {% endif %}
+        <main class="container p-5">
+            {% block body%}
+            {% endblock %}
+        </main>
     </body>
 </html>
