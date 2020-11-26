@@ -3,8 +3,11 @@
 
 {% block title%} Login {% endblock %}
 
+{% block pageHeader %}
+    <h1>User Login</h1> 
+{% endblock %}
+
 {% block body %}
-    <h1>User Login</h1>
     <form class="form-group" action="{% url 'capsule:login' %}" method="post">
         {% csrf_token %}
         {{ form | crispy}}

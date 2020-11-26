@@ -3,5 +3,14 @@
 {% block title%} Time Capsule {% endblock %}
 
 {% block body %} 
-    <h1>Welcome to your time capsule, {{ user.first_name }}!</h1>
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="display-4">Welcome to your time capsule, {{ user.first_name }}</h1>
+            <p class="lead">
+                This space is meant for you and you alone. Keep a journal, and write about anything you want.
+                Set goals that you have, either for the day, week, or month ahead or general, long-term goals
+                for your life.
+            </p>
+        </div>
+    </div>
 {% endblock %}

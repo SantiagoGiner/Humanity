@@ -3,8 +3,11 @@
 
 {% block title%} Register {% endblock %}
 
+{% block pageHeader %}
+    <h1>Create an Account</h1> 
+{% endblock %}
+
 {% block body %}
-    <h1>User Registration</h1>
     <form class="form-group" action="{% url 'capsule:register' %}" method="post">
         {% csrf_token %}
         {{ form | crispy }}

@@ -11,6 +11,8 @@ urlpatterns = [
     path('journal/', views.journal, name='journal'),
     path('journal/<int:entry_id>/', views.view_entry, name='view_entry'),
     path('goals/', views.goals, name='goals'),
+    path('goals/<str:priority>/', views.view_goal, name='view_goal'),
+    path('change_goal_<int:goal_id>_<str:action>/', views.change_goal, name='change_goal'), 
     path('journal/add_entry/', views.add_entry, name='add_entry'),
     path('notes/', views.notes, name='notes')
 ]

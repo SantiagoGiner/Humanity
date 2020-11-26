@@ -1,0 +1,80 @@
+{% extends "capsule/layout.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block script %}
+    <script src="{% static 'capsule/script.js' %}"></script>
+{% endblock %}
+
+{% block title%} Goals {% endblock %}
+
+{% block pageHeader %}
+    <h1>{{ user.first_name }}'s {{ priority }} goals</h1> 
+{% endblock %}
+
+{% block body %}
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-group mr-5" role="group" aria-label="First group">
+            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'daily' %}">Daily Goals</a>
+        </div>
+        <div class="btn-group mr-5" role="group" aria-label="Second group">
+            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'weekly' %}">Weekly Goals</a>
+        </div>
+        <div class="btn-group mr-5" role="group" aria-label="Third group">
+            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'monthly' %}">Monthly Goals</a>
+        </div>
+        <div class="btn-group mr-5" role="group" aria-label="Fourth group">
+            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'long-term' %}">Long-term Goals</a>
+        </div>
+        <div class="btn-group mr-5" role="group" aria-label="Fifth group">
+            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'completed' %}">Completed Goals</a>
+        </div>
+    </div>
+
+    {% if goals %}
+        <div class="row my-5">
+            <div class="col-4 m-auto">
+                <div class="list-group" id="list-tab" role="tablist">
+                    {% for goal in goals %}
+                        <a class="list-group-item list-group-item-action" id="list-{{ goal.id }}-list" data-toggle="list" href="#list-{{ goal.id }}" role="tab" aria-controls="{{ goal.id }}">
+                            {{ goal.title }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-8 m-auto">
+                <div class="tab-content" id="nav-tabContent">
+                    {% for goal in goals %}
+                        <div class="tab-pane fade" id="list-{{ goal.id }}" role="tabpanel" aria-labelledby="list-{{ goal.id }}-list">
+                            {{ goal.description }}
+                            {% if goal.priority != 'completed' %}
+                                <form action="{% url 'capsule:change_goal' goal.id 'complete' %}" method="post">
+                                    {% csrf_token %}
+                                    <button id="{{ goal.id }}" class="btn btn-success btn-sm mt-3" type="submit">Complete goal!</button>
+                                </form>
+                            {% else %}
+                                <form action="{% url 'capsule:change_goal' goal.id 'delete' %}" method="post">
+                                    {% csrf_token %}
+                                    <button id="{{ goal.id }}" class="btn btn-danger btn-sm mt-3" type="submit">Delete goal</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <h4>Looks like you don't have any {{ priority }} goals so far!</h4>
+    {% endif %}
+    {% if priority != 'completed' %}
+        <button class="btn btn-secondary mt-4" id="add_goal">Click here to add {{ priority }} goal</button>
+        <div id="add_goal_form">
+            <form action="{% url 'capsule:view_goal' priority %}" method="post" autocomplete="off">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <button class="btn btn-success mb-2" type="submit">Add goal</button>
+            </form>
+            <button class="btn btn-danger mb-4" id="cancel_add">Cancel</button>
+        </div>
+    {% endif %}
+{% endblock %}

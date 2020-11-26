@@ -2,11 +2,11 @@
 
 {% block title%} Journal {% endblock %}
 
+{% block pageHeader %}
+    <h1>{{ user.first_name }}'s Journal</h1> 
+{% endblock %}
+
 {% block body %}
-    <h1>This is your journal</h1>
-    {% if message %}
-        <div>{{ message }}</div>
-    {% endif %}
     <ol>
         {% for entry in entries %}
             {% url 'capsule:view_entry' entry.id as url %}

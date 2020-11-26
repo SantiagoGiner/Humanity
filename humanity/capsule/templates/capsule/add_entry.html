@@ -3,8 +3,11 @@
 
 {% block title%} Add Journal Entry {% endblock %}
 
+{% block pageHeader %}
+    <h1>Add an entry to your journal</h1> 
+{% endblock %}
+
 {% block body %} 
-    <h1>What's been on your mind?...</h1>
     <form class="form-group" action="{% url 'capsule:add_entry' %}" method="post">
         {% csrf_token %}
         {{ form | crispy}}
