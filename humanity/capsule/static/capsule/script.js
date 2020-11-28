@@ -1,17 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let addGoalButton = document.querySelector('#add_goal');
-    let addGoalForm = document.querySelector('#add_goal_form');
-    let cancelButton = document.querySelector('#cancel_add');
-    addGoalForm.style.display = 'none';
-    cancelButton.style.display = 'none';
-    addGoalButton.onclick = () => {
-        addGoalButton.style.display = 'none';
-        addGoalForm.style.display = 'block';
-        cancelButton.style.display = 'block';
+    let toggleFormButton = document.querySelector('#toggle_form');
+    let form = document.querySelector('#form');
+    let closeButton = document.querySelector('#close');
+    let entry = document.querySelector('#entry')
+    form.style.display = 'none';
+    closeButton.style.display = 'none';
+    toggleFormButton.onclick = () => {
+        toggleFormButton.style.display = 'none';
+        form.style.display = 'block';
+        closeButton.style.display = 'block';
+        if (entry) {
+            entry.style.display = 'none';
+        }
     }
-    cancelButton.onclick = () => {
-        addGoalButton.style.display = 'block';
-        addGoalForm.style.display = 'none';
-        cancelButton.style.display = 'none';
+    closeButton.onclick = () => {
+        toggleFormButton.style.display = 'block';
+        form.style.display = 'none';
+        closeButton.style.display = 'none';
+        if (entry) {
+            entry.style.display = 'block';
+        }
     }
 });

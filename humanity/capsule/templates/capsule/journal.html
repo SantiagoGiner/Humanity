@@ -1,4 +1,5 @@
 {% extends "capsule/layout.html" %}
+{% load crispy_forms_tags %}
 
 {% block title%} Journal {% endblock %}
 
@@ -7,11 +8,42 @@
 {% endblock %}
 
 {% block body %}
-    <ol>
-        {% for entry in entries %}
-            {% url 'capsule:view_entry' entry.id as url %}
-            <li><a href="{{ url }}">{{ entry }}</a></li>
-        {% endfor %}
-    </ol>
-    <a href="{% url 'capsule:add_entry' %}">Add a journal entry</a>
+    {% if entries %}
+        <ol>
+            {% for entry in entries %}
+                <li class="mb-2">
+                    <a href="{% url 'capsule:view_entry' entry.pk %}">{{ entry }} &#128394;</a>
+                </li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <h4>Looks like you don't have any journal entries!</h4>
+    {% endif %}
+    <button type="button" class="btn btn-success mt-2" data-toggle="modal" data-target="#addEntry">
+        Add a journal entry
+    </button>
+  
+    <!-- Modal -->
+    <div class="modal fade" id="addEntry" tabindex="-1" aria-labelledby="addEntryLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="addEntryLabel">Add a journal entry</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'capsule:journal' %}" method="post">
+                    {% csrf_token %}
+                    {{ form | crispy }}
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Add entry</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
 {% endblock %}

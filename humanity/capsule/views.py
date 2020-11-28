@@ -1,3 +1,4 @@
+from django.db.models.functions import Lower
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -9,18 +10,48 @@ from django.core.exceptions import ObjectDoesNotExist
 from .forms import *
 from .models import *
 
-# Create your views here.
 
 # Render the home page
 @login_required
 def index(request):
     return render(request, 'capsule/index.html')
 
-
-# Add an entry to the user's journal
+# Mark a goal as completed or delete it entirely
 @login_required
-def add_entry(request):
-    # Route was reached via POST, as by submitting a form
+def change_goal(request, goal_id, action):
+    try:
+        # Get information from the goal passed to the function
+        goal = Goal.objects.get(pk=goal_id)
+        old_priority = goal.priority
+        if action == 'complete':
+            # Change the priority of the goal to completed
+            goal.priority = 'completed'
+            goal.save()
+            messages.success(request, f'{old_priority.capitalize()} goal completed!')
+        elif action == 'delete':
+            # Delete the goal from the database
+            goal.delete()
+            messages.success(request, 'Goal deleted')
+        else:
+            # Check for unavailable action on goal
+            messages.warning(request, 'That action on a goal is not permitted')
+            return HttpResponseRedirect(reverse(f'capsule:view_goal', args=[old_priority]))
+        # Redirect the user to the goals page they were in
+        return HttpResponseRedirect(reverse(f'capsule:view_goal', args=[old_priority]))
+    # If goal no longer exists, inform the user and redirect them to main goals page
+    except ObjectDoesNotExist:
+        messages.success(request, 'That goal does not exist')
+        return HttpResponseRedirect(reverse('capsule:goals'))
+
+# Render the template for user's goals
+@login_required
+def goals(request):
+    return render(request, 'capsule/goals.html')
+
+# Render a template with the user's journal entries
+@login_required
+def journal(request):
+    # User reached via POST, as by submitting the add entry form
     if request.method == 'POST':
         form = AddJournalEntry(request.POST)
         # Validate the user's input in the form and add a journal entry to their journal
@@ -31,42 +62,11 @@ def add_entry(request):
             return HttpResponseRedirect(reverse('capsule:journal'))
         # If an error occured, redirect them to add entry again
         messages.warning(request, 'Invalid input')
-        return HttpResponseRedirect(reverse('capsule:add_entry'))
-
-    # Else, user reached via GET, as by clicking a link
-    return render(request, 'capsule/add_entry.html', {
-        'form': AddJournalEntry()
-    })
-
-@login_required
-def change_goal(request, goal_id, action):
-    try:
-        goal = Goal.objects.get(id=goal_id)
-        old_priority = goal.priority
-        if action == 'complete':
-            goal.priority = 'completed'
-            goal.save()
-            messages.success(request, f'{old_priority.capitalize()} goal completed!')
-        elif action == 'delete':
-            goal.delete()
-            messages.success(request, 'Goal deleted')
-        else:
-            messages.warning(request, 'That action on a goal is not permitted')
-            return HttpResponseRedirect(reverse(f'capsule:view_goal', args=[old_priority]))
-        return HttpResponseRedirect(reverse(f'capsule:view_goal', args=[old_priority]))
-    except ObjectDoesNotExist:
-        messages.success(request, 'That goal does not exist')
-        return HttpResponseRedirect(reverse('capsule:goals'))
-
-# Render the template for user's goals
-@login_required
-def goals(request):
-    return render(request, 'capsule/goals.html')
-
-@login_required
-def journal(request):
+        return HttpResponseRedirect(reverse('capsule:journal'))
+    # Else user reached via GET, so display the current journal entries
     return render(request, 'capsule/journal.html', {
-        'entries': JournalEntry.objects.filter(user_id=request.user.id)
+        'entries': JournalEntry.objects.filter(user_id=request.user.id),
+        'form': AddJournalEntry()
     })
 
 # Log the user in
@@ -123,7 +123,8 @@ def register(request):
             messages.success(request, 'Registered!')
             return HttpResponseRedirect(reverse('capsule:index'))
         # If an error occured, redirect them to register again
-        messages.warning(request, 'Invalid credentials. Verify that you meet all the requirements in each field')
+        messages.warning(request, 
+        'Invalid credentials. Verify that you meet all of the requirements in each field')
         return HttpResponseRedirect(reverse('capsule:register'))
 
     # Else, user reached via GET, as by clicking a link
@@ -133,30 +134,53 @@ def register(request):
 
 # View a journal entry
 @login_required
-def view_entry(request, entry_id):
-    # Render a template with the selected entry
+def view_entry(request, entry_id, action=''):
+    # User reached via POST, as by submitting a form to update entry
+    entry = JournalEntry.objects.get(pk=entry_id)
+    if request.method == 'POST':
+        if action == 'update':
+            entry.entry = request.POST['entry']
+            entry.save()
+            messages.success(request, f'{entry} updated!')
+        elif action == 'delete':
+            entry.delete()
+            messages.success(request, f'Entry deleted')
+        else:
+            messages.warning(request, 'That action is not permitted')
+        return HttpResponseRedirect(reverse('capsule:journal'))
+
+    # Else, user reached via GET, so render a template with the selected entry
     return render(request, 'capsule/view_entry.html', {
-        'entry': JournalEntry.objects.get(pk=entry_id)
+        'entry': entry,
+        'form': AddJournalEntry(initial={'entry': entry.entry})
     })
 
+# Show the user's goals or add a new goal
 @login_required
 def view_goal(request, priority):
+    # User reached via POST, as by submitting a form to add a goal
     if request.method == 'POST':
         form = AddGoal(request.POST)
+        # Check for valid inputs and add the goal to the database
         if form.is_valid():
             title = form.cleaned_data['title']
             description = form.cleaned_data['description']
-            new_goal = Goal(user_id=request.user.id, title=title, description=description, priority=priority)
+            new_goal = Goal(user_id=request.user.id, title=title, 
+                        description=description, priority=priority)
             new_goal.save()
+            # Redirect the user to the specific goals page, informing of success
             messages.success(request, f'{priority.capitalize()} goal added!')
             return HttpResponseRedirect(reverse('capsule:view_goal', args=[priority]))
+        # Else input was invalid, redirect user and inform them of this
         messages.warning(request, 'Invalid input')
         return HttpResponseRedirect(reverse('capsule:view_goal', args=[priority]))
+    # Else, user reached via GET, as by clicking a link
     if priority in ['daily', 'weekly', 'monthly', 'long-term', 'completed']:
         return render(request, 'capsule/view_goal.html', {
             'goals': Goal.objects.filter(user_id=request.user.id, priority=priority),
             'priority': priority,
             'form': AddGoal()
         })
+    # If the type of goals is not valid, redirect user and inform them of this
     messages.warning(request, 'That is not a valid type of goals')
     return HttpResponseRedirect(reverse('capsule:goals'))

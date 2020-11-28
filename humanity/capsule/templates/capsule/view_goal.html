@@ -13,6 +13,7 @@
 {% endblock %}
 
 {% block body %}
+    <!-- Buttons to switch between different types of goals -->
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group mr-5" role="group" aria-label="First group">
             <a class="btn btn-info" href="{% url 'capsule:view_goal' 'daily' %}">Daily Goals</a>
@@ -32,6 +33,7 @@
     </div>
 
     {% if goals %}
+        <!-- Show the goals as an interactive list group, from Bootstrap -->
         <div class="row my-5">
             <div class="col-4 m-auto">
                 <div class="list-group" id="list-tab" role="tablist">
@@ -42,12 +44,14 @@
                     {% endfor %}
                 </div>
             </div>
+            <!-- Show the descriptions of the goal -->
             <div class="col-8 m-auto">
                 <div class="tab-content" id="nav-tabContent">
                     {% for goal in goals %}
                         <div class="tab-pane fade" id="list-{{ goal.id }}" role="tabpanel" aria-labelledby="list-{{ goal.id }}-list">
                             {{ goal.description }}
                             {% if goal.priority != 'completed' %}
+                                <!-- Buttons to complete the goal or delete it if it is already completed -->
                                 <form action="{% url 'capsule:change_goal' goal.id 'complete' %}" method="post">
                                     {% csrf_token %}
                                     <button id="{{ goal.id }}" class="btn btn-success btn-sm mt-3" type="submit">Complete goal!</button>
@@ -63,18 +67,20 @@
                 </div>
             </div>
         </div>
+    <!-- If user does not have any goals of the selected type, display a header -->
     {% else %}
         <h4>Looks like you don't have any {{ priority }} goals so far!</h4>
     {% endif %}
+    <!-- Form to add a new goal, if the goal has not been completed -->
     {% if priority != 'completed' %}
-        <button class="btn btn-secondary mt-4" id="add_goal">Click here to add {{ priority }} goal</button>
-        <div id="add_goal_form">
+        <button class="btn btn-success mt-4" id="toggle_form">Click here to add {{ priority }} goal</button>
+        <div id="form">
             <form action="{% url 'capsule:view_goal' priority %}" method="post" autocomplete="off">
                 {% csrf_token %}
                 {{ form | crispy }}
                 <button class="btn btn-success mb-2" type="submit">Add goal</button>
+                <button class="btn btn-secondary mb-4" id="close">Close</button>
             </form>
-            <button class="btn btn-danger mb-4" id="cancel_add">Cancel</button>
         </div>
     {% endif %}
 {% endblock %}

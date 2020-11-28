@@ -1,12 +1,39 @@
 {% extends "capsule/layout.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block script %}
+    <script src="{% static 'capsule/script.js' %}"></script>
+{% endblock %}
 
 {% block title%} Journal Entry {% endblock %}
 
 {% block pageHeader %}
-    <h1>Journal entry from {{ entry.date }}</h1> 
+    <h1>{{ entry }}</h1> 
 {% endblock %}
 
 {% block body %}
-    <p>{{ entry.entry }}</p>
-    <a href="{% url 'capsule:journal' %}">Back to journal</a>
+    <p id="entry">
+        {{ entry.entry }}
+    </p>
+    <button class="btn btn-primary mt-4" id="toggle_form">Update entry</button>
+    <div id="form">
+        <form action="{% url 'capsule:change_entry' entry.pk 'update' %}" method="post">
+            {% csrf_token %}
+            {{ form | crispy }}
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group mr-2" role="group" aria-label="First group">
+                    <button class="btn btn-primary my-2" type="submit">Update</button>
+                </div>
+                <div class="btn-group mr-2" role="group" aria-label="Second group">
+                    <button class="btn btn-secondary my-2" id="close" type="button">Close</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <form action="{% url 'capsule:change_entry' entry.pk 'delete' %}" method="post">
+        {% csrf_token %}
+        <button class="btn btn-danger my-3">Delete</button>
+    </form>
+    <a class="btn btn-link my-4" href="{% url 'capsule:journal' %}">Back to journal</a>
 {% endblock %}

@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block body %}
+    <!-- Display the form to register -->
     <form class="form-group" action="{% url 'capsule:register' %}" method="post">
         {% csrf_token %}
         {{ form | crispy }}

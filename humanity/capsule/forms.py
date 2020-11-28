@@ -18,4 +18,4 @@ class AddJournalEntry(forms.Form):
 
 class AddGoal(forms.Form):
     title = forms.CharField(help_text='In a few words, what is your goal?')
-    description = forms.CharField(help_text='Describe the goal', widget=forms.Textarea, blank=True)
+    description = forms.CharField(help_text='Describe the goal (optional)', widget=forms.Textarea, required=False)
