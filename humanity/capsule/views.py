@@ -43,6 +43,10 @@ def change_goal(request, goal_id, action):
         messages.success(request, 'That goal does not exist')
         return HttpResponseRedirect(reverse('capsule:goals'))
 
+@login_required
+def change_project(request, project_id, action):
+    pass
+
 # Render the template for user's goals
 @login_required
 def goals(request):
@@ -56,7 +60,7 @@ def journal(request):
         form = AddJournalEntry(request.POST)
         # Validate the user's input in the form and add a journal entry to their journal
         if form.is_valid():
-            new_entry = JournalEntry(user_id=request.user.id, entry=form.cleaned_data['entry'])
+            new_entry = JournalEntry(user_id=request.user.pk, entry=form.cleaned_data['entry'])
             new_entry.save()
             messages.success(request, 'Journal entry added!')
             return HttpResponseRedirect(reverse('capsule:journal'))
@@ -65,7 +69,7 @@ def journal(request):
         return HttpResponseRedirect(reverse('capsule:journal'))
     # Else user reached via GET, so display the current journal entries
     return render(request, 'capsule/journal.html', {
-        'entries': JournalEntry.objects.filter(user_id=request.user.id),
+        'entries': JournalEntry.objects.filter(user_id=request.user.pk),
         'form': AddJournalEntry()
     })
 
@@ -100,11 +104,27 @@ def logout_view(request):
     messages.success(request, 'Logged out!')
     return HttpResponseRedirect(reverse('capsule:login'))
 
-
 # Render template for user's notes
 @login_required
-def notes(request):
-    return render(request, 'capsule/notes.html')
+def projects(request):
+    if request.method == 'POST':
+        form = AddProject(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            description = form.cleaned_data['description']
+            finish_date = form.cleaned_data['finish_date']
+            status = form.cleaned_data['status']
+            other_info = form.cleaned_data['other_info']
+            new_project = Project(user_id=request.user.pk, title=title, description=description,
+                finish_date=finish_date, status=status, other_info=other_info)
+            new_project.save()
+            messages.success(request, f'{title} added to your projects!')
+            return HttpResponseRedirect(reverse('capsule:projects'))
+    projects = Project.objects.filter(user_id=request.user.pk)
+    return render(request, 'capsule/projects.html', {
+        'form': AddProject(),
+        'projects': projects
+    })
 
 # Create a new account for the user
 def register(request):
@@ -138,13 +158,18 @@ def view_entry(request, entry_id, action=''):
     # User reached via POST, as by submitting a form to update entry
     entry = JournalEntry.objects.get(pk=entry_id)
     if request.method == 'POST':
+        # Action is to update the current journal entry
         if action == 'update':
+            # Update the entry with new text
             entry.entry = request.POST['entry']
             entry.save()
             messages.success(request, f'{entry} updated!')
+        # Action is to delete the current journal entry
         elif action == 'delete':
+            # Delete the entry from the database
             entry.delete()
             messages.success(request, f'Entry deleted')
+        # Check for attempt at other, unavailable action
         else:
             messages.warning(request, 'That action is not permitted')
         return HttpResponseRedirect(reverse('capsule:journal'))
@@ -165,7 +190,7 @@ def view_goal(request, priority):
         if form.is_valid():
             title = form.cleaned_data['title']
             description = form.cleaned_data['description']
-            new_goal = Goal(user_id=request.user.id, title=title, 
+            new_goal = Goal(user_id=request.user.pk, title=title, 
                         description=description, priority=priority)
             new_goal.save()
             # Redirect the user to the specific goals page, informing of success
@@ -177,10 +202,26 @@ def view_goal(request, priority):
     # Else, user reached via GET, as by clicking a link
     if priority in ['daily', 'weekly', 'monthly', 'long-term', 'completed']:
         return render(request, 'capsule/view_goal.html', {
-            'goals': Goal.objects.filter(user_id=request.user.id, priority=priority),
+            'goals': Goal.objects.filter(user_id=request.user.pk, priority=priority),
             'priority': priority,
             'form': AddGoal()
         })
     # If the type of goals is not valid, redirect user and inform them of this
     messages.warning(request, 'That is not a valid type of goals')
     return HttpResponseRedirect(reverse('capsule:goals'))
+
+@login_required
+def view_project(request, project_id):
+    if request.method == 'POST':
+        pass
+    project = Project.objects.get(pk=project_id)
+    return render(request, 'capsule/view_project.html', {
+        'project': project,
+        'form': AddProject(initial={
+            'title': project.title,
+            'description': project.description,
+            'finish_date': project.finish_date,
+            'status': project.status,
+            'other_info': project.other_info
+        })
+    })

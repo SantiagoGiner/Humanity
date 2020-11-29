@@ -16,6 +16,27 @@ class UserRegistrationForm(UserCreationForm):
 class AddJournalEntry(forms.Form):
     entry = forms.CharField(help_text='What has been on your mind?', widget=forms.Textarea)
 
+# Form to add a new goal
 class AddGoal(forms.Form):
     title = forms.CharField(help_text='In a few words, what is your goal?')
     description = forms.CharField(help_text='Describe the goal (optional)', widget=forms.Textarea, required=False)
+
+# Declare an input class that accepts a date
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+# Form to add a new project
+class AddProject(forms.Form):
+    STATUS_CHOICES = [
+        ('c', 'Completed'),
+        ('i', 'In progess'),
+        ('s', 'Stopped')
+    ]
+    title = forms.CharField(help_text='What is the title of your project?')
+    description = forms.CharField(help_text='Provide a project description', widget=forms.Textarea)
+    finish_date = forms.DateField(help_text='When do you want to have the project done?', 
+        widget=DateInput())
+    status = forms.CharField(help_text='What is the current status of the project?', 
+        widget=forms.Select(choices=STATUS_CHOICES))
+    other_info = forms.CharField(help_text='Any other important information about the project?',
+        widget=forms.Textarea, required=False)

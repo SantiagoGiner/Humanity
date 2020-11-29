@@ -17,3 +17,11 @@ h4 {
 main {
   overflow-x: auto;
 }
+
+h5 {
+  color: #5466b8;
+}
+
+.project_stats {
+  text-align: center;
+}

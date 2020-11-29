@@ -13,6 +13,8 @@ urlpatterns = [
     path('journal/<int:entry_id>/<str:action>/', views.view_entry, name='change_entry'),
     path('goals/', views.goals, name='goals'),
     path('goals/<str:priority>/', views.view_goal, name='view_goal'),
-    path('change_goal_<int:goal_id>_<str:action>/', views.change_goal, name='change_goal'), 
-    path('notes/', views.notes, name='notes')
+    path('goals/<int:goal_id>/<str:action>/', views.change_goal, name='change_goal'), 
+    path('projects/', views.projects, name='projects'),
+    path('projects/<int:project_id>/', views.view_project, name='view_project'),
+    path('projects/<int:project_id>/<str:action>/', views.change_project, name='change_project')
 ]

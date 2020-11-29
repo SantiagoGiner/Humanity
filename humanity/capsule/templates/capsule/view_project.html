@@ -1,0 +1,77 @@
+{% extends "capsule/layout.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block script %}
+    <script src="{% static 'capsule/script.js' %}"></script>
+{% endblock %}
+
+{% block title %} Project {% endblock %}
+
+{% block pageHeader %} 
+    <h1>{{project.title}}</h1>
+{% endblock %}
+
+{% block body %}
+    <div id="entry">
+        <h5 class="project_stats">Status:</h5>
+        {% if project.status == 'i' %}
+            <p class="project_stats">Project in progress</p>
+        {% elif project.status == 'c' %}
+            <p class="project_stats">Project completed!</p>
+        {% else %}
+            <p class="project_stats">Project stopped</p>
+        {% endif %}
+        <h5 class="project_stats">Goal finish date:</h5>
+        <p class="project_stats">{{ project.finish_date }}</p> 
+        <hr>
+
+        <h2>Description</h2>
+        <p>
+            {{ project.description }}
+        </p>
+        
+        <hr>
+        <h2>Other information</h2>
+        <p>
+            {{ project.other_info }}
+        </p>
+    </div>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-success mt-5" data-toggle="modal" data-target="#addProjectLog">
+        Click here to add a project log
+    </button>
+  
+    <!-- Modal -->
+    <div class="modal fade" id="addProjectLog" tabindex="-1" aria-labelledby="projectLogLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="projectLogLabel">Project log</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                    TODO
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success">Add log</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <button class="btn btn-primary my-2" id="toggle_form">Click here to modify project</button>
+    <div id="form">
+        <form action="{% url 'capsule:change_project' project.pk 'update' %}" method="post" autocomplete="off">
+            {% csrf_token %}
+            {{ form | crispy }}
+            <button class="btn btn-success mb-2" type="submit">Modify project</button>
+            <button class="btn btn-secondary mb-4" id="close" type="button">Close</button>
+        </form>
+    </div>
+    <br>
+    <a class="btn btn-link my-2"href="{% url 'capsule:projects' %}">Back to Projects page</a>
+{% endblock %}

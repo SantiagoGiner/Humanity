@@ -1,0 +1,72 @@
+{% extends "capsule/layout.html" %}
+{% load crispy_forms_tags %}
+
+
+{% block title %} Projects {% endblock %}
+
+{% block pageHeader %}
+    <h1>{{ user.first_name }}'s Projects</h1>
+{% endblock %}
+
+{% block body %}
+    <h4>Add any projects you are working on, describe them, write their status, goal finish times, and any other information</h4>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Goal finish date</th>
+            <th scope="col">Status</th>
+            <th scope="col">Other Info</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for project in projects %}
+                <tr>
+                    <th scope="row">
+                        <a href="{% url 'capsule:view_project' project.pk %}">{{ project.title }}</a>
+                    </th>
+                    <td>{{ project.finish_date }}</td>
+                    {% if project.status == 'i' %}
+                        <td>In progress</td>
+                    {% elif project.status == 'c' %}
+                        <td>Completed!</td>
+                    {% else %}
+                        <td>Project stopped</td>
+                    {% endif %}
+                    <td>{{ project.other_info }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <td colspan="3">
+                <button type="button" class="btn btn-success mt-2" data-toggle="modal" data-target="#addProject">
+                    Add a project
+                </button>
+              
+                <!-- Modal -->
+                <div class="modal fade" id="addProject" tabindex="-1" aria-labelledby="addProjectLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="addProjectLabel">Add a project</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="{% url 'capsule:projects' %}" method="post">
+                                    {% csrf_token %}
+                                    {{ form | crispy }}
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-success">Add project</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tfoot>
+    </table>
+{% endblock %}
