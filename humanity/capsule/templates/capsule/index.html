@@ -2,7 +2,11 @@
 
 {% block title%} Time Capsule {% endblock %}
 
-{% block body %} 
+{% block pageHeader %}
+    <h1>&#8987; Time Capsule</h1>
+{% endblock %}
+
+{% block body %}
     <div class="jumbotron">
         <div class="container">
             <h1 class="display-4">Welcome to your time capsule, {{ user.first_name }}</h1>

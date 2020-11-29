@@ -40,3 +40,6 @@ class AddProject(forms.Form):
         widget=forms.Select(choices=STATUS_CHOICES))
     other_info = forms.CharField(help_text='Any other important information about the project?',
         widget=forms.Textarea, required=False)
+
+class addProjectLog(forms.Form):
+    log = forms.CharField(help_text='Project log', widget=forms.Textarea)

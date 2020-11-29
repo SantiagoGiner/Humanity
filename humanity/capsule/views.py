@@ -11,6 +11,8 @@ from .forms import *
 from .models import *
 
 
+STATUS_CHOICES = ['i', 'c', 's']
+
 # Render the home page
 @login_required
 def index(request):
@@ -45,7 +47,28 @@ def change_goal(request, goal_id, action):
 
 @login_required
 def change_project(request, project_id, action):
-    pass
+    form = AddProject(request.POST)
+    project = Project.objects.get(pk=project_id)
+    if form.is_valid() and action == 'update':
+        if form.cleaned_data['status'] in STATUS_CHOICES:
+            project.title = form.cleaned_data['title']
+            project.description = form.cleaned_data['description']
+            project.status = form.cleaned_data['status']
+            project.finish_date = form.cleaned_data['finish_date']
+            project.other_info = form.cleaned_data['other_info']
+            project.save()
+            messages.success(request, 'Project updated!')
+        else:
+            messages.warning(request, 'Invalid input')
+        return HttpResponseRedirect(reverse('capsule:view_project', args=[project_id]))
+    elif action == 'delete':
+        project.delete()
+        messages.success(request, 'Project deleted!')
+        return HttpResponseRedirect(reverse('capsule:projects'))
+    else:
+        messages.warning(request, 'Action not permitted')
+        return HttpResponseRedirect(reverse('capsule:projects'))
+        
 
 # Render the template for user's goals
 @login_required
@@ -115,11 +138,13 @@ def projects(request):
             finish_date = form.cleaned_data['finish_date']
             status = form.cleaned_data['status']
             other_info = form.cleaned_data['other_info']
-            new_project = Project(user_id=request.user.pk, title=title, description=description,
-                finish_date=finish_date, status=status, other_info=other_info)
-            new_project.save()
-            messages.success(request, f'{title} added to your projects!')
-            return HttpResponseRedirect(reverse('capsule:projects'))
+            if status in STATUS_CHOICES:
+                new_project = Project(user_id=request.user.pk, title=title, description=description,
+                    finish_date=finish_date, status=status, other_info=other_info)
+                new_project.save()
+                messages.success(request, f'{title} added to your projects!')
+                return HttpResponseRedirect(reverse('capsule:projects'))
+            messages.warning(request, 'Invalid input')
     projects = Project.objects.filter(user_id=request.user.pk)
     return render(request, 'capsule/projects.html', {
         'form': AddProject(),
@@ -211,17 +236,37 @@ def view_goal(request, priority):
     return HttpResponseRedirect(reverse('capsule:goals'))
 
 @login_required
+def view_log(request, project_id, log_id):
+    log = projectLog.objects.get(pk=log_id)
+    if request.method == 'POST':
+        log.delete()
+        messages.success(request, f'{log} deleted')
+        return HttpResponseRedirect(reverse('capsule:view_project', args=[project_id]))
+    return render(request, 'capsule/log.html', {
+        'log': log,
+        'project_id': project_id
+    })
+
+@login_required
 def view_project(request, project_id):
     if request.method == 'POST':
-        pass
+        form = addProjectLog(request.POST)
+        if form.is_valid():
+            log = projectLog(user_id=request.user.pk, project_id=project_id,
+                log=form.cleaned_data['log'])
+            log.save()
+            messages.success(request, 'Project log added!')
+            return HttpResponseRedirect(reverse('capsule:view_project', args=[project_id]))
     project = Project.objects.get(pk=project_id)
     return render(request, 'capsule/view_project.html', {
         'project': project,
-        'form': AddProject(initial={
+        'project_form': AddProject(initial={
             'title': project.title,
             'description': project.description,
             'finish_date': project.finish_date,
             'status': project.status,
             'other_info': project.other_info
-        })
+        }),
+        'logs': projectLog.objects.filter(user_id=request.user.pk, project_id=project_id),
+        'log_form': addProjectLog()
     })

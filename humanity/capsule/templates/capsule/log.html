@@ -1,0 +1,17 @@
+{% extends "capsule/layout.html" %}
+
+{% block title %} Project log {% endblock %}
+
+{% block pageHeader %} 
+    <h1>{{ log }}</h1>
+{% endblock %}
+
+{% block body %}
+    <p>{{ log.log }}</p>
+    <hr>
+    <form action="{% url 'capsule:view_log' project_id log.pk %}" method="post">
+        {% csrf_token %}
+        <button class="btn btn-danger my-4" type="submit">Delete log</button>
+    </form>
+    <a href="{% url 'capsule:view_project' project_id %}">Back to project</a>
+{% endblock %}

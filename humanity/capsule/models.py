@@ -55,3 +55,14 @@ class Project(models.Model):
         ordering = ('-created',)
     def __str__(self):
         return f'Project: {self.title}'
+
+class projectLog(models.Model):
+    user_id = models.IntegerField()
+    project_id = models.IntegerField()
+    log = models.TextField()
+    date = models.DateField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True, auto_now=False)
+    class Meta:
+        ordering = ('-created',)
+    def __str__(self):
+        return f'Project log from {self.date}'
