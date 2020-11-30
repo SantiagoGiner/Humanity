@@ -9,3 +9,8 @@ The user can have a journal, wherein by submitting a form the entry gets added a
 
 # Goals
 Now, the user can also set daily, weekly, monthly, and long-term goals. They can then complete these goals, whereafter they will be saved in the 'Completed Goals' section. They also have the option to delete the goals entirely.
+
+# Projects
+The user can add any projects on which they are working, including the project title, goal time to finish the project, project status, description of the project, and
+any other relevant information they desire. They can then update the project's information. They can also add project logs, whereby they record the progress they have
+been making on their project. Finally, they can also delete the project entirely.
