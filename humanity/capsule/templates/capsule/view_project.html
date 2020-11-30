@@ -13,6 +13,7 @@
 {% endblock %}
 
 {% block body %}
+    <!-- Show the general information about the project: finish date and status -->
     <div id="entry">
         <h5 class="project_stats">Status:</h5>
         {% if project.status == 'i' %}
@@ -25,7 +26,7 @@
         <h5 class="project_stats">Goal finish date:</h5>
         <p class="project_stats">{{ project.finish_date }}</p> 
         <hr>
-
+        <!-- Show the more detailed information about the project -->
         <h2>Description</h2>
         <br>
         <p>
@@ -41,6 +42,7 @@
         <hr>
         <h2>Project Log</h2>
         <br>
+        <!-- Include all logs as links to a log page -->
         {% if not logs %}
             <p>Looks like you haven't recorded any project logs</p>
         {% else %}
@@ -50,12 +52,12 @@
             {% endfor %}
         {% endif %}
         <br>
-        <!-- Button trigger modal -->
+        <!-- Button trigger modal to add a project log -->
         <button type="button" class="btn btn-success my-3" data-toggle="modal" data-target="#addProjectLog">
             Click here to add a project log
         </button>
     
-        <!-- Modal -->
+        <!-- Modal, which contains the form to add project log -->
         <div class="modal fade" id="addProjectLog" tabindex="-1" aria-labelledby="projectLogLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -80,8 +82,10 @@
         </div>
     </div>
     <hr>
+    <!-- Button to toggle the form to update project information -->
     <button class="btn btn-primary my-3" id="toggle_form">Click here to update project</button>
     <div id="form">
+        <!-- Form to update the project information -->
         <form action="{% url 'capsule:change_project' project.pk 'update' %}" method="post" autocomplete="off">
             {% csrf_token %}
             {{ project_form | crispy }}
@@ -94,5 +98,6 @@
         </form>
     </div>
     <br>
+    <!-- Link to go back to projects page -->
     <a class="btn btn-link my-2"href="{% url 'capsule:projects' %}">Back to Projects page</a>
 {% endblock %}

@@ -45,28 +45,40 @@ def change_goal(request, goal_id, action):
         messages.success(request, 'That goal does not exist')
         return HttpResponseRedirect(reverse('capsule:goals'))
 
+# Method for updating/deleting a project
 @login_required
 def change_project(request, project_id, action):
-    form = AddProject(request.POST)
-    project = Project.objects.get(pk=project_id)
-    if form.is_valid() and action == 'update':
-        if form.cleaned_data['status'] in STATUS_CHOICES:
-            project.title = form.cleaned_data['title']
-            project.description = form.cleaned_data['description']
-            project.status = form.cleaned_data['status']
-            project.finish_date = form.cleaned_data['finish_date']
-            project.other_info = form.cleaned_data['other_info']
-            project.save()
-            messages.success(request, 'Project updated!')
+    try:
+        # Get the user's input and validate it
+        form = AddProject(request.POST)
+        project = Project.objects.get(pk=project_id)
+        if form.is_valid() and action == 'update':
+            if form.cleaned_data['status'] in STATUS_CHOICES:
+                # Update the information in the database with new values
+                project.title = form.cleaned_data['title']
+                project.description = form.cleaned_data['description']
+                project.status = form.cleaned_data['status']
+                project.finish_date = form.cleaned_data['finish_date']
+                project.other_info = form.cleaned_data['other_info']
+                project.save()
+                messages.success(request, 'Project updated!')
+            # If input is not valid, inform the user
+            else:
+                messages.warning(request, 'Invalid input')
+            # Redirect user to specific project page
+            return HttpResponseRedirect(reverse('capsule:view_project', args=[project_id]))
+        elif action == 'delete':
+            # Delete the project from database and redirect user to projects page
+            project.delete()
+            messages.success(request, 'Project deleted!')
+            return HttpResponseRedirect(reverse('capsule:projects'))
+        # User requested another, unavailable action
         else:
-            messages.warning(request, 'Invalid input')
-        return HttpResponseRedirect(reverse('capsule:view_project', args=[project_id]))
-    elif action == 'delete':
-        project.delete()
-        messages.success(request, 'Project deleted!')
-        return HttpResponseRedirect(reverse('capsule:projects'))
-    else:
-        messages.warning(request, 'Action not permitted')
+            messages.warning(request, 'Action not permitted')
+            return HttpResponseRedirect(reverse('capsule:projects'))
+    # Else, project does not exist
+    except ObjectDoesNotExist:
+        messages.success(request, 'That project does not exist')
         return HttpResponseRedirect(reverse('capsule:projects'))
         
 
@@ -127,24 +139,32 @@ def logout_view(request):
     messages.success(request, 'Logged out!')
     return HttpResponseRedirect(reverse('capsule:login'))
 
-# Render template for user's notes
+# View of user's projects
 @login_required
 def projects(request):
+    # User reached via POST, as by submitting a form to add a project
     if request.method == 'POST':
+        # Get the user's input and validate it
         form = AddProject(request.POST)
         if form.is_valid():
+            # Create new project with user's input
             title = form.cleaned_data['title']
             description = form.cleaned_data['description']
             finish_date = form.cleaned_data['finish_date']
             status = form.cleaned_data['status']
             other_info = form.cleaned_data['other_info']
+            # Ensure status is valid
             if status in STATUS_CHOICES:
                 new_project = Project(user_id=request.user.pk, title=title, description=description,
                     finish_date=finish_date, status=status, other_info=other_info)
+                # Save the project and redirect user
                 new_project.save()
                 messages.success(request, f'{title} added to your projects!')
                 return HttpResponseRedirect(reverse('capsule:projects'))
+            # Else, status was not valid
             messages.warning(request, 'Invalid input')
+            return HttpResponseRedirect(reverse('capsule:projects'))
+    # User reached via GET, as by clicking a link
     projects = Project.objects.filter(user_id=request.user.pk)
     return render(request, 'capsule/projects.html', {
         'form': AddProject(),
@@ -235,28 +255,37 @@ def view_goal(request, priority):
     messages.warning(request, 'That is not a valid type of goals')
     return HttpResponseRedirect(reverse('capsule:goals'))
 
+# View of project log
 @login_required
 def view_log(request, project_id, log_id):
     log = projectLog.objects.get(pk=log_id)
+    # User reached via POST, as by submitting the form to delete a log
     if request.method == 'POST':
+        # Delete project log
         log.delete()
         messages.success(request, f'{log} deleted')
         return HttpResponseRedirect(reverse('capsule:view_project', args=[project_id]))
+    # User reached via GET: render template with log
     return render(request, 'capsule/log.html', {
         'log': log,
         'project_id': project_id
     })
 
+# View of a specific project
 @login_required
 def view_project(request, project_id):
+    # User reached via POST, as by submitting a form to add a log
     if request.method == 'POST':
+        # Get user's input and validate it
         form = addProjectLog(request.POST)
         if form.is_valid():
             log = projectLog(user_id=request.user.pk, project_id=project_id,
                 log=form.cleaned_data['log'])
+                # Save the log in the database
             log.save()
             messages.success(request, 'Project log added!')
             return HttpResponseRedirect(reverse('capsule:view_project', args=[project_id]))
+    # User reached via GET: render a template with the project information
     project = Project.objects.get(pk=project_id)
     return render(request, 'capsule/view_project.html', {
         'project': project,

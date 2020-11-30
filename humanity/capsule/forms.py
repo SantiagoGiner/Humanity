@@ -27,6 +27,7 @@ class DateInput(forms.DateInput):
 
 # Form to add a new project
 class AddProject(forms.Form):
+    # Only allow these choices of project status
     STATUS_CHOICES = [
         ('c', 'Completed'),
         ('i', 'In progess'),
@@ -41,5 +42,6 @@ class AddProject(forms.Form):
     other_info = forms.CharField(help_text='Any other important information about the project?',
         widget=forms.Textarea, required=False)
 
+# Form to add a project log
 class addProjectLog(forms.Form):
     log = forms.CharField(help_text='Project log', widget=forms.Textarea)

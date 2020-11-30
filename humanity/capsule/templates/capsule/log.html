@@ -7,11 +7,14 @@
 {% endblock %}
 
 {% block body %}
+    <!-- Show the project log as a paragraph -->
     <p>{{ log.log }}</p>
     <hr>
+    <!-- Button to delete the log -->
     <form action="{% url 'capsule:view_log' project_id log.pk %}" method="post">
         {% csrf_token %}
         <button class="btn btn-danger my-4" type="submit">Delete log</button>
     </form>
+    <!-- Link to go back to project page -->
     <a href="{% url 'capsule:view_project' project_id %}">Back to project</a>
 {% endblock %}

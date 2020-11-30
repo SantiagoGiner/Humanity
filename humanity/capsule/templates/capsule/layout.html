@@ -20,7 +20,6 @@
         <!-- Navigation bar to switch between pages, taken from Bootstrap -->
         <nav class="navbar fixed-bottom navbar-light bg-light">
             {% if user.is_authenticated %}
-                <a class="navbar-brand" href="{% url 'capsule:index' %}">Home</a>
                 <a class="navbar-brand" href="{% url 'capsule:journal' %}">Journal</a>
                 <a class="navbar-brand" href="{% url 'capsule:goals' %}">Goals</a>
                 <a class="navbar-brand" href="{% url 'capsule:projects' %}">Projects</a>
@@ -29,6 +28,12 @@
             <a class="navbar-brand" href="{% url 'capsule:register' %}">Register</a>
             <a class="navbar-brand" href="{% url 'capsule:login' %}">Login</a>
             {% endif %}
+        </nav>
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="{% url 'capsule:index' %}">
+                <img src="{% static 'capsule/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
+                Humanity: Time Capsule
+            </a>
         </nav>
         <!-- Display any messages that have been flashed -->
         {% if messages %}

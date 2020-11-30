@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 
-# Database to store a journal entry
+# Table to store a journal entry
 class JournalEntry(models.Model):
     # Reference a user_id so that the entry is unique to the user themself
     user_id = models.IntegerField()
@@ -15,7 +15,7 @@ class JournalEntry(models.Model):
     def __str__(self):
         return f'Journal entry from {self.date}'
 
-# Database to store a goal
+# Table to store a goal
 class Goal(models.Model):
     user_id = models.IntegerField()
     title = models.TextField()
@@ -38,7 +38,9 @@ class Goal(models.Model):
         else:
             return f'Goal completed to: {self.title}'
 
+# Table to store a project
 class Project(models.Model):
+    # Only allow these options for project status
     STATUS_CHOICES = [
         ('c', 'Completed'),
         ('i', 'In progess'),
@@ -50,17 +52,21 @@ class Project(models.Model):
     finish_date = models.DateField()
     status = models.CharField(choices=STATUS_CHOICES, max_length=11)
     other_info = models.TextField()
+    # Order projects by date added
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
     class Meta:
         ordering = ('-created',)
     def __str__(self):
         return f'Project: {self.title}'
 
+# Table to store a project log
 class projectLog(models.Model):
     user_id = models.IntegerField()
+    # Reference a specific project, using the project's primary key
     project_id = models.IntegerField()
     log = models.TextField()
     date = models.DateField(auto_now_add=True)
+    # Order the logs by date added
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
     class Meta:
         ordering = ('-created',)

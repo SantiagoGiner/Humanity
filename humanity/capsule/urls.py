@@ -3,6 +3,7 @@ from . import views
 
 app_name = 'capsule'
 
+# All the url paths of the application
 urlpatterns = [
     path('', views.index, name='index'),
     path('login/', views.login_view, name='login'),

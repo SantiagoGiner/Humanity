@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block body %}
+    <!-- Buttons to switch between different types of goals -->
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
         <div class="btn-group mr-5" role="group" aria-label="First group">
             <a class="btn btn-info" href="{% url 'capsule:view_goal' 'daily' %}">Daily Goals</a>
@@ -21,6 +22,7 @@
             <a class="btn btn-info" href="{% url 'capsule:view_goal' 'long-term' %}">Long-term Goals</a>
         </div>
     </div>
+    <!-- Information about the goals page -->
     <div class="jumbotron mt-5">
         <div class="container">
             <h3>Set your goals</h3>

@@ -9,6 +9,7 @@
 
 {% block body %}
     {% if entries %}
+    <!-- Display the journal entries as a list of links -->
         <ol>
             {% for entry in entries %}
                 <li class="mb-2">
@@ -17,13 +18,15 @@
             {% endfor %}
         </ol>
     {% else %}
+        <!-- If user does not have any journal entries -->
         <h4>Looks like you don't have any journal entries!</h4>
     {% endif %}
+    <!-- Button to trigger the modal to add an entry -->
     <button type="button" class="btn btn-success mt-2" data-toggle="modal" data-target="#addEntry">
         Add a journal entry
     </button>
   
-    <!-- Modal -->
+    <!-- Modal, which contains the form to add an entry -->
     <div class="modal fade" id="addEntry" tabindex="-1" aria-labelledby="addEntryLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

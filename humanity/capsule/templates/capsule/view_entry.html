@@ -13,11 +13,14 @@
 {% endblock %}
 
 {% block body %}
+    <!-- Show the entry as a paragraph -->
     <p id="entry">
         {{ entry.entry }}
     </p>
+    <!-- Button to toggle the form to update the entry -->
     <button class="btn btn-primary mt-4" id="toggle_form">Update entry</button>
     <div id="form">
+        <!-- Form to update the entry -->
         <form action="{% url 'capsule:change_entry' entry.pk 'update' %}" method="post">
             {% csrf_token %}
             {{ form | crispy }}
@@ -31,9 +34,11 @@
             </div>
         </form>
     </div>
+    <!-- Button to delete the entry -->
     <form action="{% url 'capsule:change_entry' entry.pk 'delete' %}" method="post">
         {% csrf_token %}
-        <button class="btn btn-danger my-3">Delete</button>
+        <button class="btn btn-danger my-3">Delete entry</button>
     </form>
+    <!-- Link to go back to journal page -->
     <a class="btn btn-link my-4" href="{% url 'capsule:journal' %}">Back to journal</a>
 {% endblock %}
