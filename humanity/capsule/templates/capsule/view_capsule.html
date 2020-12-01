@@ -1,0 +1,19 @@
+{% extends "capsule/layout.html" %}
+
+{% block title %} Mini Capsule {% endblock %}
+
+{% block pageHeader %}
+    <h1>{{ capsule }}</h1> 
+{% endblock %}
+
+{% block body %}
+    <!-- Display the capsule content as a paragraph -->
+    <p class="general_info">{{ capsule.content }}</p>
+    <!-- Form to delete the mini capsule -->
+    <form action="{% url 'capsule:view_capsule' capsule.pk %}" method="post">
+        {% csrf_token %}
+        <button class="btn btn-danger my-2" type="submit">Delete</button>
+    </form>
+    <!-- Link to go back to mini capsules page -->
+    <a href="{% url 'capsule:mini_capsule' %}">Back to mini capsules</a>
+{% endblock %}

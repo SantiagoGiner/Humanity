@@ -1,0 +1,57 @@
+{% extends "capsule/layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %} Locks {% endblock %}
+
+{% block pageHeader %}
+    <h1>{{ user.first_name }}'s mini time capsules</h1> 
+{% endblock %}
+
+{% block body %}
+    <!-- Introduction to the page -->
+    <h4> Write down a message to your future self</h4>
+    <p class="general_info">
+        Click on the button "Add mini time capsule," write down a message for your future self, choose when
+        you want to view the content again (be it a day, month, year, ten years or more into the future!), and
+        that's it. Come back when the day arrives and you'll read your message!
+    </p>
+    <hr>
+    {% if capsules %}
+    <!-- Display the unlocked time capsules as a list of links -->
+        <ol>
+            {% for capsule in capsules %}
+                <li class="my-2">
+                    <a href="{% url 'capsule:view_capsule' capsule.pk %}">{{ capsule }} &#128368;</a>
+                </li>
+            {% endfor %}
+        </ol>
+    {% endif %}
+    <!-- Button to trigger the modal to add mini time capsule -->
+    <button type="button" class="btn btn-success my-3" data-toggle="modal" data-target="#addCapsule">
+        Add a mini time capsule
+    </button>
+  
+    <!-- Modal, which contains the form to add a mini time capsule -->
+    <div class="modal fade" id="addCapsule" tabindex="-1" aria-labelledby="addCapsuleLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="addCapsuleLabel">Add a mini time capsule</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'capsule:mini_capsule' %}" method="post">
+                        {% csrf_token %}
+                        {{ form | crispy }}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Add capsule</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db.models.functions import Lower
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -139,6 +141,46 @@ def logout_view(request):
     messages.success(request, 'Logged out!')
     return HttpResponseRedirect(reverse('capsule:login'))
 
+# Mini time capsules
+@login_required
+def mini_capsule(request):
+    # User reached via POST, as by submitting a form to add a capsule
+    if request.method == 'POST':
+        # Get user's input and validate it
+        form = addMiniCapsule(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data['content']
+            time = form.cleaned_data['time']
+            # Save the capsule and redirect user
+            MiniCapsule(user_id=request.user.pk, content=content, time=time).save()
+            messages.success(request, f'Mini time capsule added! It will be visible again on {time}')
+            return HttpResponseRedirect(reverse('capsule:mini_capsule'))
+    # User reached via GET
+    capsules = MiniCapsule.objects.filter(user_id=request.user.pk)
+    today = date.today()
+    day, month, year = int(today.strftime('%Y')), int(today.strftime('%m')), int(today.strftime('%d'))
+    # List to contain unlocked capsules, i.e. capsules that can be viewed
+    unlocked = []
+    for capsule in capsules:
+        # If the current year is greater than the designated year, add capsule to unlocked
+        if year > int(capsule.time.year):
+            unlocked.append(capsule)
+        # If the current year is the same as the designated one
+        else:
+            # If the month is greater than the designated one, add capsule to unlocked
+            if month > int(capsule.time.month):
+                unlocked.append(capsule)
+            # If designated month equals current month and day is greater than/equal 
+            # to designated day, add capsule to unlocked
+            elif month == int(capsule.time.month) and day >= int(capsule.time.day):
+                unlocked.append(capsule)
+
+    # Render a template with capsules that should be viewed
+    return render(request, 'capsule/mini.html', {
+        'capsules': unlocked,
+        'form': addMiniCapsule()
+    })
+
 # View of user's projects
 @login_required
 def projects(request):
@@ -195,6 +237,20 @@ def register(request):
     # Else, user reached via GET, as by clicking a link
     return render(request, 'capsule/register.html', {
         'form': UserRegistrationForm()
+    })
+
+# View or delete a mini time capsule
+@login_required
+def view_capsule(request, capsule_id):
+    # User reached via POST, as by submitting a form to delete the mini capsule
+    if request.method == 'POST':
+        # Delete the capsule with the id provided
+        MiniCapsule.objects.get(pk=capsule_id).delete()
+        messages.success(request, 'Mini time capsule deleted')
+        return HttpResponseRedirect(reverse('capsule:mini_capsule'))
+    # User reached via GET: render a template with the requested capsule
+    return render(request, 'capsule/view_capsule.html', {
+        'capsule': MiniCapsule.objects.get(pk=capsule_id)
     })
 
 # View a journal entry
@@ -258,7 +314,7 @@ def view_goal(request, priority):
 # View of project log
 @login_required
 def view_log(request, project_id, log_id):
-    log = projectLog.objects.get(pk=log_id)
+    log = ProjectLog.objects.get(pk=log_id)
     # User reached via POST, as by submitting the form to delete a log
     if request.method == 'POST':
         # Delete project log
@@ -279,7 +335,7 @@ def view_project(request, project_id):
         # Get user's input and validate it
         form = addProjectLog(request.POST)
         if form.is_valid():
-            log = projectLog(user_id=request.user.pk, project_id=project_id,
+            log = ProjectLog(user_id=request.user.pk, project_id=project_id,
                 log=form.cleaned_data['log'])
                 # Save the log in the database
             log.save()
@@ -296,6 +352,6 @@ def view_project(request, project_id):
             'status': project.status,
             'other_info': project.other_info
         }),
-        'logs': projectLog.objects.filter(user_id=request.user.pk, project_id=project_id),
+        'logs': ProjectLog.objects.filter(user_id=request.user.pk, project_id=project_id),
         'log_form': addProjectLog()
     })

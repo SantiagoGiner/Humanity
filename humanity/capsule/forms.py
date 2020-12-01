@@ -45,3 +45,9 @@ class AddProject(forms.Form):
 # Form to add a project log
 class addProjectLog(forms.Form):
     log = forms.CharField(help_text='Project log', widget=forms.Textarea)
+
+# Form to add a mini time capsule
+class addMiniCapsule(forms.Form):
+    content = forms.CharField(help_text='What would your future self to know?', widget=forms.Textarea)
+    time = forms.DateField(help_text='When do you want to view this mini time capsule again?', 
+        widget=DateInput())

@@ -5,4 +5,5 @@ from .models import *
 admin.site.register(JournalEntry)
 admin.site.register(Goal)
 admin.site.register(Project)
-admin.site.register(projectLog)
+admin.site.register(ProjectLog)
+admin.site.register(MiniCapsule)

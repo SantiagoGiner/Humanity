@@ -1,9 +1,9 @@
 // Wait for page content to be loaded
 document.addEventListener('DOMContentLoaded', () => {
-    let toggleFormButton = document.querySelector('#toggle_form');
-    let form = document.querySelector('#form');
-    let closeButton = document.querySelector('#close');
-    let entry = document.querySelector('#entry')
+    const toggleFormButton = document.querySelector('#toggle_form');
+    const form = document.querySelector('#form');
+    const closeButton = document.querySelector('#close');
+    const entry = document.querySelector('#entry')
     // Initially hide the form and the close button
     form.style.display = 'none';
     closeButton.style.display = 'none';

@@ -15,16 +15,16 @@
 {% block body %}
     <!-- Show the general information about the project: finish date and status -->
     <div id="entry">
-        <h5 class="project_stats">Status:</h5>
+        <h5 class="general_info">Status:</h5>
         {% if project.status == 'i' %}
-            <p class="project_stats">Project in progress</p>
+            <p class="general_info">Project in progress</p>
         {% elif project.status == 'c' %}
-            <p class="project_stats">Project completed!</p>
+            <p class="general_info">Project completed!</p>
         {% else %}
-            <p class="project_stats">Project stopped</p>
+            <p class="general_info">Project stopped</p>
         {% endif %}
-        <h5 class="project_stats">Goal finish date:</h5>
-        <p class="project_stats">{{ project.finish_date }}</p> 
+        <h5 class="general_info">Goal finish date:</h5>
+        <p class="general_info">{{ project.finish_date }}</p> 
         <hr>
         <!-- Show the more detailed information about the project -->
         <h2>Description</h2>

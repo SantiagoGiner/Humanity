@@ -60,7 +60,7 @@ class Project(models.Model):
         return f'Project: {self.title}'
 
 # Table to store a project log
-class projectLog(models.Model):
+class ProjectLog(models.Model):
     user_id = models.IntegerField()
     # Reference a specific project, using the project's primary key
     project_id = models.IntegerField()
@@ -72,3 +72,14 @@ class projectLog(models.Model):
         ordering = ('-created',)
     def __str__(self):
         return f'Project log from {self.date}'
+
+class MiniCapsule(models.Model):
+    user_id = models.IntegerField()
+    content = models.TextField()
+    date_added = models.DateField(auto_now_add=True)
+    time = models.DateField()
+    created = models.DateTimeField(auto_now_add=True, auto_now=False)
+    class Meta:
+        ordering = ('-created',)
+    def __str__(self):
+        return f'Mini Time Capsule from {self.date_added}'
