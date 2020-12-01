@@ -9,21 +9,11 @@
 {% block body %}
     <!-- Buttons to switch between different types of goals -->
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-        <div class="btn-group mr-5" role="group" aria-label="First group">
-            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'daily' %}">Daily Goals</a>
-        </div>
-        <div class="btn-group mr-5" role="group" aria-label="Second group">
-            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'weekly' %}">Weekly Goals</a>
-        </div>
-        <div class="btn-group mr-5" role="group" aria-label="Third group">
-            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'monthly' %}">Monthly Goals</a>
-        </div>
-        <div class="btn-group mr-5" role="group" aria-label="Fourth group">
-            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'long-term' %}">Long-term Goals</a>
-        </div>
-        <div class="btn-group mr-5" role="group" aria-label="Fifth group">
-            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'completed' %}">Completed Goals</a>
-        </div>
+        <a class="btn btn-info mx-4 my-2" href="{% url 'capsule:view_goal' 'daily' %}">Daily Goals</a>
+        <a class="btn btn-info mx-4 my-2" href="{% url 'capsule:view_goal' 'weekly' %}">Weekly Goals</a>
+        <a class="btn btn-info mx-4 my-2" href="{% url 'capsule:view_goal' 'monthly' %}">Monthly Goals</a>
+        <a class="btn btn-info mx-4 my-2" href="{% url 'capsule:view_goal' 'long-term' %}">Long-term Goals</a>
+        <a class="btn btn-info mx-4 my-2" href="{% url 'capsule:view_goal' 'completed' %}">Completed Goals</a>
     </div>
     <!-- Information about the goals page -->
     <div class="jumbotron mt-5">

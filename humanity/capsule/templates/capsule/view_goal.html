@@ -15,21 +15,11 @@
 {% block body %}
     <!-- Buttons to switch between different types of goals -->
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-        <div class="btn-group mr-5" role="group" aria-label="First group">
-            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'daily' %}">Daily Goals</a>
-        </div>
-        <div class="btn-group mr-5" role="group" aria-label="Second group">
-            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'weekly' %}">Weekly Goals</a>
-        </div>
-        <div class="btn-group mr-5" role="group" aria-label="Third group">
-            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'monthly' %}">Monthly Goals</a>
-        </div>
-        <div class="btn-group mr-5" role="group" aria-label="Fourth group">
-            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'long-term' %}">Long-term Goals</a>
-        </div>
-        <div class="btn-group mr-5" role="group" aria-label="Fifth group">
-            <a class="btn btn-info" href="{% url 'capsule:view_goal' 'completed' %}">Completed Goals</a>
-        </div>
+        <a class="btn btn-info mx-4 my-2" href="{% url 'capsule:view_goal' 'daily' %}">Daily Goals</a>
+        <a class="btn btn-info mx-4 my-2" href="{% url 'capsule:view_goal' 'weekly' %}">Weekly Goals</a>
+        <a class="btn btn-info mx-4 my-2" href="{% url 'capsule:view_goal' 'monthly' %}">Monthly Goals</a>
+        <a class="btn btn-info mx-4 my-2" href="{% url 'capsule:view_goal' 'long-term' %}">Long-term Goals</a>
+        <a class="btn btn-info mx-4 my-2" href="{% url 'capsule:view_goal' 'completed' %}">Completed Goals</a>
     </div>
 
     {% if goals %}
@@ -73,7 +63,7 @@
     {% endif %}
     <!-- Form to add a new goal, if the goal has not been completed -->
     {% if priority != 'completed' %}
-        <button class="btn btn-success mt-4" id="toggle_form">Click here to add {{ priority }} goal</button>
+        <button class="btn btn-success my-2" id="toggle_form">Click here to add {{ priority }} goal</button>
         <div id="form">
             <form action="{% url 'capsule:view_goal' priority %}" method="post" autocomplete="off">
                 {% csrf_token %}
