@@ -15,10 +15,12 @@ from .models import *
 
 STATUS_CHOICES = ['i', 'c', 's']
 
+
 # Render the home page
 @login_required
 def index(request):
     return render(request, 'capsule/index.html')
+
 
 # Mark a goal as completed or delete it entirely
 @login_required
@@ -46,6 +48,7 @@ def change_goal(request, goal_id, action):
     except ObjectDoesNotExist:
         messages.success(request, 'That goal does not exist')
         return HttpResponseRedirect(reverse('capsule:goals'))
+
 
 # Method for updating/deleting a project
 @login_required
@@ -83,8 +86,11 @@ def change_project(request, project_id, action):
         messages.success(request, 'That project does not exist')
         return HttpResponseRedirect(reverse('capsule:projects'))
 
+
+# Delete account
 @login_required
 def delete(request):
+    # Delete the user's account and user's data from all tables
     User.objects.get(pk=request.user.pk).delete()
     JournalEntry.objects.filter(user_id=request.user.pk).delete()
     Goal.objects.filter(user_id=request.user.pk).delete()
@@ -93,10 +99,12 @@ def delete(request):
     messages.success(request, 'Account deleted. We hope you enjoyed the page!')
     return HttpResponseRedirect(reverse('capsule:login'))
 
+
 # Render the template for user's goals
 @login_required
 def goals(request):
     return render(request, 'capsule/goals.html')
+
 
 # Render a template with the user's journal entries
 @login_required
@@ -118,6 +126,7 @@ def journal(request):
         'entries': JournalEntry.objects.filter(user_id=request.user.pk),
         'form': AddJournalEntry()
     })
+
 
 # Log the user in
 def login_view(request):
@@ -144,11 +153,13 @@ def login_view(request):
         'form': AuthenticationForm()
     })
 
+
 # Log the user out
 def logout_view(request):
     logout(request)
     messages.success(request, 'Logged out!')
     return HttpResponseRedirect(reverse('capsule:login'))
+
 
 # Mini time capsules
 @login_required
@@ -190,6 +201,7 @@ def mini_capsule(request):
         'form': addMiniCapsule()
     })
 
+
 # View of user's projects
 @login_required
 def projects(request):
@@ -222,6 +234,7 @@ def projects(request):
         'projects': projects
     })
 
+
 # Create a new account for the user
 def register(request):
     # Route was reached via POST, as by submitting a form
@@ -248,6 +261,7 @@ def register(request):
         'form': UserRegistrationForm()
     })
 
+
 # View or delete a mini time capsule
 @login_required
 def view_capsule(request, capsule_id):
@@ -261,6 +275,7 @@ def view_capsule(request, capsule_id):
     return render(request, 'capsule/view_capsule.html', {
         'capsule': MiniCapsule.objects.get(pk=capsule_id)
     })
+
 
 # View a journal entry
 @login_required
@@ -289,6 +304,7 @@ def view_entry(request, entry_id, action=''):
         'entry': entry,
         'form': AddJournalEntry(initial={'entry': entry.entry})
     })
+
 
 # Show the user's goals or add a new goal
 @login_required
@@ -320,6 +336,7 @@ def view_goal(request, priority):
     messages.warning(request, 'That is not a valid type of goals')
     return HttpResponseRedirect(reverse('capsule:goals'))
 
+
 # View of project log
 @login_required
 def view_log(request, project_id, log_id):
@@ -335,6 +352,7 @@ def view_log(request, project_id, log_id):
         'log': log,
         'project_id': project_id
     })
+
 
 # View of a specific project
 @login_required
