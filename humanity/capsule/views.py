@@ -178,7 +178,7 @@ def mini_capsule(request):
     # User reached via GET
     capsules = MiniCapsule.objects.filter(user_id=request.user.pk)
     today = date.today()
-    day, month, year = int(today.strftime('%Y')), int(today.strftime('%m')), int(today.strftime('%d'))
+    day, month, year = int(today.strftime('%d')), int(today.strftime('%m')), int(today.strftime('%Y'))
     # List to contain unlocked capsules, i.e. capsules that can be viewed
     unlocked = []
     for capsule in capsules:
