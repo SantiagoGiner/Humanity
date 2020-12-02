@@ -63,7 +63,7 @@
     {% endif %}
     <!-- Form to add a new goal, if the goal has not been completed -->
     {% if priority != 'completed' %}
-        <button class="btn btn-success my-2" id="toggle_form">Click here to add {{ priority }} goal</button>
+        <button class="btn btn-success my-4" id="toggle_form">Click here to add {{ priority }} goal</button>
         <div id="form">
             <form action="{% url 'capsule:view_goal' priority %}" method="post" autocomplete="off">
                 {% csrf_token %}

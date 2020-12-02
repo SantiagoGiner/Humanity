@@ -73,10 +73,12 @@ class ProjectLog(models.Model):
     def __str__(self):
         return f'Project log from {self.date}'
 
+# Table to store messages for future self
 class MiniCapsule(models.Model):
     user_id = models.IntegerField()
     content = models.TextField()
     date_added = models.DateField(auto_now_add=True)
+    # Date in which the message should be viewed again
     time = models.DateField()
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
     class Meta:

@@ -20,5 +20,6 @@ urlpatterns = [
     path('projects/<int:project_id>/<str:action>/', views.change_project, name='change_project'),
     path('projects/<int:project_id>/<int:log_id>', views.view_log, name='view_log'),
     path('minicapsule/', views.mini_capsule, name='mini_capsule'),
-    path('minicapsule/<int:capsule_id>/', views.view_capsule, name='view_capsule')
+    path('minicapsule/<int:capsule_id>/', views.view_capsule, name='view_capsule'),
+    path('delete/', views.delete, name='delete')
 ]

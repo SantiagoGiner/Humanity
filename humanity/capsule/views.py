@@ -82,7 +82,16 @@ def change_project(request, project_id, action):
     except ObjectDoesNotExist:
         messages.success(request, 'That project does not exist')
         return HttpResponseRedirect(reverse('capsule:projects'))
-        
+
+@login_required
+def delete(request):
+    User.objects.get(pk=request.user.pk).delete()
+    JournalEntry.objects.filter(user_id=request.user.pk).delete()
+    Goal.objects.filter(user_id=request.user.pk).delete()
+    Project.objects.filter(user_id=request.user.pk).delete()
+    MiniCapsule.objects.filter(user_id=request.user.pk).delete()
+    messages.success(request, 'Account deleted. We hope you enjoyed the page!')
+    return HttpResponseRedirect(reverse('capsule:login'))
 
 # Render the template for user's goals
 @login_required
