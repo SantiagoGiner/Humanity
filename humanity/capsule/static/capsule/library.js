@@ -11,9 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 let html = '';
                 for(let i = 0; i < data.items.length; i++) {
                     html += `<form method="post">`
-                    html += `<p class="container my-2">Title: "${data.items[i].volumeInfo.title}"</p>`;
+                    html += `<p class="container my-2">Title: ${data.items[i].volumeInfo.title}</p>`;
                     html += `<input name="title" style="display:none;" value="${data.items[i].volumeInfo.title}">`;
-                    html += `<p class="container my-2">Author(s): "${data.items[i].volumeInfo.authors}"</p>`;
+                    html += `<p class="container my-2">Author(s): ${data.items[i].volumeInfo.authors}</p>`;
                     html += `<input name="author" style="display:none;" value="${data.items[i].volumeInfo.authors}">`;
                     if(data.items[i].volumeInfo.imageLinks) {
                         html += `<img class="img mb-4" src="${data.items[i].volumeInfo.imageLinks.thumbnail}">`;

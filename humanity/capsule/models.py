@@ -85,3 +85,9 @@ class MiniCapsule(models.Model):
         ordering = ('-created',)
     def __str__(self):
         return f'Mini Time Capsule from {self.date_added}'
+
+# Table to store books
+class Library(models.Model):
+    user_id = models.IntegerField()
+    title = models.CharField(max_length=200)
+    
