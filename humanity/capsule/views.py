@@ -1,5 +1,6 @@
 from datetime import date
 
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -20,6 +21,19 @@ STATUS_CHOICES = ['i', 'c', 's']
 def index(request):
     return render(request, 'capsule/index.html')
 
+
+@login_required
+@csrf_exempt
+def add_book(request):
+    if request.method == 'POST':
+        book = {}
+        book['title'] = request.POST['title']
+        book['author'] = request.POST.get('author')
+        book['cover'] = request.POST.get('cover')
+        return render(request, 'capsule/library.html', {
+            'book': book
+        })
+    return render(request, 'capsule/add_book.html')
 
 # Mark a goal as completed or delete it entirely
 @login_required
@@ -125,6 +139,11 @@ def journal(request):
         'entries': JournalEntry.objects.filter(user_id=request.user.pk),
         'form': AddJournalEntry()
     })
+
+
+@login_required
+def library(request):
+    return render(request, 'capsule/library.html')
 
 
 # Log the user in

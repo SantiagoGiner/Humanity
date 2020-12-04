@@ -21,5 +21,7 @@ urlpatterns = [
     path('projects/<int:project_id>/<int:log_id>', views.view_log, name='view_log'),
     path('minicapsule/', views.mini_capsule, name='mini_capsule'),
     path('minicapsule/<int:capsule_id>/', views.view_capsule, name='view_capsule'),
-    path('delete/', views.delete, name='delete')
+    path('delete/', views.delete, name='delete'),
+    path('library/', views.library, name='library'),
+    path('library/add_book/', views.add_book, name='add_book')
 ]

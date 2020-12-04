@@ -1,0 +1,18 @@
+{% extends "capsule/layout.html" %}
+
+{% block title%} Library {% endblock %}
+
+{% block pageHeader %}
+    <h1>{{ user.first_name }}'s Library</h1>
+{% endblock %}
+
+{% block body %}
+    <a href="{% url 'capsule:add_book' %}">Add a book</a>
+    {% if book %}
+        <ul>
+            <li>{{ book.title }}</li>
+            <li>{{ book.author }}</li>
+            <img src="{{ book.cover }}">
+        </ul>
+    {% endif %}
+{% endblock %}

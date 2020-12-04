@@ -6,7 +6,8 @@
         {% block script %} {% endblock %}
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
         <link href="{% static 'capsule/favicon.ico' %}" rel="icon">
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
@@ -32,6 +33,7 @@
                     <a class="navbar-brand mx-2" href="{% url 'capsule:goals' %}">Goals</a>
                     <a class="navbar-brand mx-2" href="{% url 'capsule:projects' %}">Projects</a>
                     <a class="navbar-brand mx-2" href="{% url 'capsule:mini_capsule' %}">Mini Capsules</a>
+                    <a class="navbar-brand mx-2" href="{% url 'capsule:library' %}">Library</a>
                     <a class="navbar-brand ml-5" href="{% url 'capsule:logout' %}">Log Out</a>
                     <a class="navbar-brand mx-2" href="{% url 'capsule:delete' %}">Delete Account</a>
 
