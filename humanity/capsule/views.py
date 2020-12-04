@@ -111,8 +111,10 @@ def delete(request):
     JournalEntry.objects.filter(user_id=request.user.pk).delete()
     Goal.objects.filter(user_id=request.user.pk).delete()
     Project.objects.filter(user_id=request.user.pk).delete()
+    ProjectLog.objects.filter(user_id=request.user.pk).delete()
     MiniCapsule.objects.filter(user_id=request.user.pk).delete()
-    messages.success(request, 'Account deleted. We hope you enjoyed the page!')
+    Book.objects.filter(user_id=request.user.pk).delete()
+    messages.success(request, 'Account deleted. We hope you enjoyed the site!')
     return HttpResponseRedirect(reverse('capsule:login'))
 
 
