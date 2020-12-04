@@ -15,6 +15,7 @@ class JournalEntry(models.Model):
     def __str__(self):
         return f'Journal entry from {self.date}'
 
+
 # Table to store a goal
 class Goal(models.Model):
     user_id = models.IntegerField()
@@ -38,6 +39,7 @@ class Goal(models.Model):
         else:
             return f'Goal completed to: {self.title}'
 
+
 # Table to store a project
 class Project(models.Model):
     # Only allow these options for project status
@@ -59,6 +61,7 @@ class Project(models.Model):
     def __str__(self):
         return f'Project: {self.title}'
 
+
 # Table to store a project log
 class ProjectLog(models.Model):
     user_id = models.IntegerField()
@@ -73,6 +76,7 @@ class ProjectLog(models.Model):
     def __str__(self):
         return f'Project log from {self.date}'
 
+
 # Table to store messages for future self
 class MiniCapsule(models.Model):
     user_id = models.IntegerField()
@@ -86,8 +90,13 @@ class MiniCapsule(models.Model):
     def __str__(self):
         return f'Mini Time Capsule from {self.date_added}'
 
+
 # Table to store books
-class Library(models.Model):
+class Book(models.Model):
     user_id = models.IntegerField()
     title = models.CharField(max_length=200)
-    
+    authors = models.CharField(max_length=200)
+    cover_photo = models.URLField(max_length=300, blank=True)
+    notes = models.TextField(blank=True)
+    def __str__(self):
+        return f'{self.title}, by {self.authors}'

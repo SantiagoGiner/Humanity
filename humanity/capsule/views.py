@@ -26,14 +26,17 @@ def index(request):
 @csrf_exempt
 def add_book(request):
     if request.method == 'POST':
-        book = {}
-        book['title'] = request.POST['title']
-        book['author'] = request.POST.get('author')
-        book['cover'] = request.POST.get('cover')
-        return render(request, 'capsule/library.html', {
-            'book': book
-        })
+        try:
+            if Book.objects.get(user_id=request.user.pk, title=request.POST['title']):
+                messages.warning(request, f'{request.POST["title"]} is already in your library')
+                return HttpResponseRedirect(reverse('capsule:add_book'))
+        except Book.DoesNotExist:
+            Book(user_id=request.user.pk, title=request.POST['title'], authors=request.POST['author'],
+                 cover_photo=request.POST['cover']).save()
+            messages.success(request, f'{request.POST["title"]} was added to your library!')
+            return HttpResponseRedirect(reverse('capsule:library'))
     return render(request, 'capsule/add_book.html')
+
 
 # Mark a goal as completed or delete it entirely
 @login_required
@@ -143,7 +146,10 @@ def journal(request):
 
 @login_required
 def library(request):
-    return render(request, 'capsule/library.html')
+    books = Book.objects.filter(user_id=request.user.pk)
+    return render(request, 'capsule/library.html', {
+        'books': books
+    })
 
 
 # Log the user in
@@ -237,7 +243,7 @@ def projects(request):
             # Ensure status is valid
             if status in STATUS_CHOICES:
                 new_project = Project(user_id=request.user.pk, title=title, description=description,
-                    finish_date=finish_date, status=status, other_info=other_info)
+                                      finish_date=finish_date, status=status, other_info=other_info)
                 # Save the project and redirect user
                 new_project.save()
                 messages.success(request, f'{title} added to your projects!')
@@ -271,7 +277,7 @@ def register(request):
             return HttpResponseRedirect(reverse('capsule:index'))
         # If an error occured, redirect them to register again
         messages.warning(request, 
-        'Invalid credentials. Verify that you meet all of the requirements in each field')
+                         'Verify that you meet all of the requirements in each field!')
         return HttpResponseRedirect(reverse('capsule:register'))
 
     # Else, user reached via GET, as by clicking a link
@@ -335,7 +341,7 @@ def view_goal(request, priority):
             title = form.cleaned_data['title']
             description = form.cleaned_data['description']
             new_goal = Goal(user_id=request.user.pk, title=title, 
-                        description=description, priority=priority)
+                            description=description, priority=priority)
             new_goal.save()
             # Redirect the user to the specific goals page, informing of success
             messages.success(request, f'{priority.capitalize()} goal added!')
@@ -381,8 +387,8 @@ def view_project(request, project_id):
         form = addProjectLog(request.POST)
         if form.is_valid():
             log = ProjectLog(user_id=request.user.pk, project_id=project_id,
-                log=form.cleaned_data['log'])
-                # Save the log in the database
+                             log=form.cleaned_data['log'])
+            # Save the log in the database
             log.save()
             messages.success(request, 'Project log added!')
             return HttpResponseRedirect(reverse('capsule:view_project', args=[project_id]))

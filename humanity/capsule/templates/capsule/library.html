@@ -7,12 +7,17 @@
 {% endblock %}
 
 {% block body %}
-    <a href="{% url 'capsule:add_book' %}">Add a book</a>
-    {% if book %}
-        <ul>
-            <li>{{ book.title }}</li>
-            <li>{{ book.author }}</li>
-            <img src="{{ book.cover }}">
-        </ul>
+    {% if books %}
+        {% for book in books %}
+            <h2>{{ book.title }}</h2>
+            <h5>{{ book.authors }}</h5>
+            <img src="{{ book.cover_photo }}">
+            <button class="btn btn-primary mx-3">Book notes</button>
+            <button class="btn btn-danger mx-2">Delete book</button>
+            <hr>
+        {% endfor %}
+    {% else %}
+            <h4>Looks like you haven't added books to your library</h4>
     {% endif %}
+    <a class="btn btn-success" href="{% url 'capsule:add_book' %}">Add a book</a>
 {% endblock %}
