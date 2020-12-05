@@ -8,6 +8,7 @@ class UserRegistrationForm(UserCreationForm):
     first_name = forms.CharField(max_length=64, help_text='Enter your first name.')
     last_name = forms.CharField(max_length=64, help_text='Enter your last name.')
     email = forms.EmailField(max_length=254, help_text='Required. Enter a valid email address.')
+    
     # Save these new fields
     class Meta:
         model = User
@@ -22,7 +23,8 @@ class AddJournalEntry(forms.Form):
 # Form to add a new goal
 class AddGoal(forms.Form):
     title = forms.CharField(help_text='In a few words, what is your goal?')
-    description = forms.CharField(help_text='Describe the goal (optional)', widget=forms.Textarea, required=False)
+    description = forms.CharField(help_text='Describe the goal (optional)', 
+                                  widget=forms.Textarea, required=False)
 
 
 # Declare an input class that accepts a date
@@ -57,4 +59,4 @@ class addProjectLog(forms.Form):
 class addMiniCapsule(forms.Form):
     content = forms.CharField(help_text='What would your future self to know?', widget=forms.Textarea)
     time = forms.DateField(help_text='When do you want to view this mini time capsule again?', 
-        widget=DateInput())
+                           widget=DateInput())

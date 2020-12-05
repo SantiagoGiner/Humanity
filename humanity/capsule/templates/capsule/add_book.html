@@ -1,6 +1,7 @@
 {% extends "capsule/layout.html" %}
 {% load static %}
 
+<!-- Link the pertinent JavaScript file -->
 {% block script %}
     <script src="{% static 'capsule/library.js' %}"></script>
 {% endblock %}
@@ -12,8 +13,12 @@
 {% endblock %}
 
 {% block body %}
+    <!-- Form to search for a book -->
     <input autocomplete="off" class="form-control" id="query" placeholder="Enter book title...">
     <button id="search" class="btn btn-primary my-2" type="button">Search</button>
+    <!-- Section to display the search results -->
     <div id="search_result">
     </div>
+    <!-- Link to go back to the user's library -->
+    <a class="btn btn-link my-2" href="{% url 'capsule:library' %}">Back to library</a>
 {% endblock %}

@@ -22,19 +22,25 @@ def index(request):
     return render(request, 'capsule/index.html')
 
 
+# Add a book to the user's library
 @login_required
 @csrf_exempt
 def add_book(request):
+    # User reached via POST, as by submitting a form to add a book
     if request.method == 'POST':
         try:
+            # If book is already in Book table, then user already owns it
             if Book.objects.get(user_id=request.user.pk, title=request.POST['title']):
                 messages.warning(request, f'{request.POST["title"]} is already in your library')
+                # Redirect the user to add another
                 return HttpResponseRedirect(reverse('capsule:add_book'))
+        # If book is not in user's library, then add it
         except Book.DoesNotExist:
             Book(user_id=request.user.pk, title=request.POST['title'], authors=request.POST['author'],
                  cover_photo=request.POST['cover']).save()
             messages.success(request, f'{request.POST["title"]} was added to your library!')
             return HttpResponseRedirect(reverse('capsule:library'))
+    # Else, user reached via GET: render a template to search for new books
     return render(request, 'capsule/add_book.html')
 
 
@@ -146,8 +152,21 @@ def journal(request):
     })
 
 
+# Display the user's books
 @login_required
-def library(request):
+def library(request, book_id=''):
+    # User reached via POST, as by clicking a button to delete a book
+    if request.method == 'POST':
+        # If the book is in user's library, delete it
+        try:
+            Book.objects.get(pk=book_id).delete()
+            messages.success(request, 'Book deleted!')
+        # Else, user does not own the book
+        except Book.DoesNotExist:
+            messages.warning(request, 'That book is not in your library')
+        # Redirect them to library through GET
+        return HttpResponseRedirect(reverse('capsule:library'))
+    # User reached through GET: find the user's books and display them
     books = Book.objects.filter(user_id=request.user.pk)
     return render(request, 'capsule/library.html', {
         'books': books

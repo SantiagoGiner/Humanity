@@ -1,32 +1,37 @@
 from django.db import models
 
-# Create your models here.
 
 # Table to store a journal entry
+
 class JournalEntry(models.Model):
     # Reference a user_id so that the entry is unique to the user themself
     user_id = models.IntegerField()
     entry = models.TextField()
     date = models.DateField(auto_now_add=True)
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
+
     # Order the entries by date added
     class Meta:
         ordering = ('-created',)
+
     def __str__(self):
         return f'Journal entry from {self.date}'
 
 
 # Table to store a goal
+
 class Goal(models.Model):
     user_id = models.IntegerField()
     title = models.TextField()
     description = models.TextField()
-    created = models.DateTimeField(auto_now_add=True, auto_now=False)
     # Add a priority to the goal
     priority = models.CharField(max_length=9, default='daily')
+    created = models.DateTimeField(auto_now_add=True, auto_now=False)
+
     # Order the goals by date added
     class Meta:
         ordering = ('-created',)
+
     def __str__(self):
         if self.priority == 'long-term':
             return f'Long-term goal to: {self.title}'
@@ -41,6 +46,7 @@ class Goal(models.Model):
 
 
 # Table to store a project
+
 class Project(models.Model):
     # Only allow these options for project status
     STATUS_CHOICES = [
@@ -54,10 +60,12 @@ class Project(models.Model):
     finish_date = models.DateField()
     status = models.CharField(choices=STATUS_CHOICES, max_length=11)
     other_info = models.TextField()
-    # Order projects by date added
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
+
+    # Order projects by date added
     class Meta:
         ordering = ('-created',)
+
     def __str__(self):
         return f'Project: {self.title}'
 
@@ -69,10 +77,12 @@ class ProjectLog(models.Model):
     project_id = models.IntegerField()
     log = models.TextField()
     date = models.DateField(auto_now_add=True)
-    # Order the logs by date added
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
+
+    # Order the logs by date added
     class Meta:
         ordering = ('-created',)
+
     def __str__(self):
         return f'Project log from {self.date}'
 
@@ -85,18 +95,28 @@ class MiniCapsule(models.Model):
     # Date in which the message should be viewed again
     time = models.DateField()
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
+
+    # Order the capsules by date added
     class Meta:
         ordering = ('-created',)
+
     def __str__(self):
         return f'Mini Time Capsule from {self.date_added}'
 
 
 # Table to store books
+
 class Book(models.Model):
     user_id = models.IntegerField()
     title = models.CharField(max_length=200)
     authors = models.CharField(max_length=200)
     cover_photo = models.URLField(max_length=300, blank=True)
     notes = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True, auto_now=False)
+
+    # Order the books by date added
+    class Meta:
+        ordering = ('-created',)
+
     def __str__(self):
         return f'{self.title}, by {self.authors}'

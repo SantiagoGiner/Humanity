@@ -7,17 +7,27 @@
 {% endblock %}
 
 {% block body %}
+    <!-- If there are any books to display -->
     {% if books %}
+        <!-- Iterate over each book -->
         {% for book in books %}
+            <!-- Display the book's title, author(s), and cover photo -->
             <h2>{{ book.title }}</h2>
             <h5>{{ book.authors }}</h5>
             <img src="{{ book.cover_photo }}">
+            <!-- Link to access the user's book notes -->
             <button class="btn btn-primary mx-3">Book notes</button>
-            <button class="btn btn-danger mx-2">Delete book</button>
+            <!-- Form to delete the book from the library -->
+            <form action="{% url 'capsule:library' book.pk %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-danger my-2" type="submit">Delete book</button>
+            </form>
             <hr>
         {% endfor %}
+    <!-- If there are no books to display, inform user thusly -->
     {% else %}
             <h4>Looks like you haven't added books to your library</h4>
     {% endif %}
-    <a class="btn btn-success" href="{% url 'capsule:add_book' %}">Add a book</a>
+    <!-- Link to add a book -->
+    <a class="btn btn-success my-2" href="{% url 'capsule:add_book' %}">Add a book</a>
 {% endblock %}

@@ -4,6 +4,7 @@ from . import views
 app_name = 'capsule'
 
 # All the url paths of the application
+# This includes login, logout, register, journal, mini capsules, goals, projects, and library
 urlpatterns = [
     path('', views.index, name='index'),
     path('login/', views.login_view, name='login'),
@@ -23,5 +24,6 @@ urlpatterns = [
     path('minicapsule/<int:capsule_id>/', views.view_capsule, name='view_capsule'),
     path('delete/', views.delete, name='delete'),
     path('library/', views.library, name='library'),
+    path('library/<int:book_id>', views.library, name='library'),
     path('library/add_book/', views.add_book, name='add_book')
 ]
