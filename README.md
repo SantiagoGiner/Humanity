@@ -14,3 +14,6 @@ Now, the user can also set daily, weekly, monthly, and long-term goals. They can
 The user can add any projects on which they are working, including the project title, goal time to finish the project, project status, description of the project, and
 any other relevant information they desire. They can then update the project's information. They can also add project logs, whereby they record the progress they have
 been making on their project. Finally, they can also delete the project entirely.
+
+# Mini Capsules
+With this feature, the user can write a message to their future self. They submit a form specifying a message and a date in which they whan to read that message. Then, the message will be displayed only if the current date is on or after the date they specified.
