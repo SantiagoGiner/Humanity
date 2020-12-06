@@ -105,12 +105,12 @@ class MiniCapsule(models.Model):
 
 
 # Table to store books
-
 class Book(models.Model):
     user_id = models.IntegerField()
     title = models.CharField(max_length=200)
     authors = models.CharField(max_length=200)
     cover_photo = models.URLField(max_length=300, blank=True)
+    description = models.TextField()
     notes = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
 
@@ -119,4 +119,27 @@ class Book(models.Model):
         ordering = ('-created',)
 
     def __str__(self):
-        return f'{self.title}, by {self.authors}'
+        return f'{self.title}, by {self.authors}' 
+
+
+# Table to store book notes
+class BookNote(models.Model):
+    TYPE_CHOICES = [
+        ('o', 'Opinion'),
+        ('s', 'Summary'),
+    ]
+    user_id = models.IntegerField()
+    book_id = models.IntegerField()
+    title = models.CharField(max_length=64)
+    note = models.TextField()
+    note_type = models.CharField(choices=TYPE_CHOICES, max_length=8)
+    created = models.DateTimeField(auto_now_add=True, auto_now=False)
+
+    # Order the books by date added
+    class Meta:
+        ordering = ('-created',)
+
+    def __str__(self):
+        if self.note_type == 'o':
+            return f'Opinion: {self.title}'
+        return f'Summary: {self.title}'

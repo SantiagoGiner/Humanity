@@ -1,0 +1,57 @@
+{% extends "capsule/layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block title%} Book Notes {% endblock %}
+
+{% block pageHeader %}
+    <h1>{{ book.title }}</h1>
+{% endblock %}
+
+{% block body %}
+    <!-- Display the book's information -->
+    <img class="rounded mx-auto d-block" src="{{ book.cover_photo }}">
+    <h5 class="general_info">Author(s): {{ book.authors }}</h5>
+    <h5 class="general_info">Description:</h5>
+    <p class="general_info">{{ book.description }}</p> 
+    <hr>
+    <h2 class="h2 mb-3">{{ user.first_name }}'s Notes</h2>
+    {% if notes %}
+        {% for note in notes %}
+            <a href="{% url 'capsule:view_note' note.pk %}">{{ note }} &#128221;</a>
+            <br>
+        {% endfor %}
+        <hr>
+    {% else %}
+        <h4>Looks like you haven't added any notes</h4>
+    {% endif %}
+    <!-- Button to trigger the modal to add a note -->
+    <button type="button" class="btn btn-success my-2" data-toggle="modal" data-target="#addNote">
+        Add a book note
+    </button>
+  
+    <!-- Modal, which contains the form to add a note -->
+    <div class="modal fade" id="addNote" tabindex="-1" aria-labelledby="addNoteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="addNoteLabel">Add a book note</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'capsule:book_notes' book.pk %}" method="post">
+                        {% csrf_token %}
+                        {{ form | crispy }}
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success">Add note</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <a class="btn btn-link my-2" href="{% url 'capsule:library' %}">Back to library</a>
+{% endblock %}

@@ -7,13 +7,13 @@ from django.contrib import messages
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.core.exceptions import ObjectDoesNotExist
 
 from .forms import *
 from .models import *
 
 
 STATUS_CHOICES = ['i', 'c', 's']
+TYPE_CHOICES = ['o', 's']
 
 
 # Render the home page
@@ -37,75 +37,91 @@ def add_book(request):
         # If book is not in user's library, then add it
         except Book.DoesNotExist:
             Book(user_id=request.user.pk, title=request.POST['title'], authors=request.POST['author'],
-                 cover_photo=request.POST['cover']).save()
+                 cover_photo=request.POST['cover'], description=request.POST.get('description')).save()
             messages.success(request, f'{request.POST["title"]} was added to your library!')
             return HttpResponseRedirect(reverse('capsule:library'))
     # Else, user reached via GET: render a template to search for new books
     return render(request, 'capsule/add_book.html')
 
 
+# Show the user's book and the relevant notes
+@login_required
+def book_notes(request, book_id):
+    # User reached via POST, as by submitting a form to add a note
+    if request.method == 'POST':
+        # Get user's input and validate it
+        form = addNote(request.POST)
+        if form.is_valid() and form.cleaned_data['note_type'] in TYPE_CHOICES:
+            # Add the book note to the BookNote table
+            BookNote(user_id=request.user.pk, book_id=book_id, title=form.cleaned_data['title'],
+                     note=form.cleaned_data['note'], note_type=form.cleaned_data['note_type']).save()
+            messages.success(request, 'Book note added!')
+        # If input was invalid, inform user so
+        else:
+            messages.warning(request, 'Invalid input. Please try again.')
+        # Redirect user to current book note page
+        return HttpResponseRedirect(reverse('capsule:book_notes', args=[book_id]))
+    # User reached via GET: find user's book and book notes and display them
+    book = Book.objects.get(pk=book_id)
+    return render(request, 'capsule/book_notes.html', {
+        'book': book,
+        'form': addNote(),
+        'notes': BookNote.objects.filter(user_id=request.user.pk, book_id=book_id)
+    })
+
+
 # Mark a goal as completed or delete it entirely
 @login_required
 def change_goal(request, goal_id, action):
-    try:
-        # Get information from the goal passed to the function
-        goal = Goal.objects.get(pk=goal_id)
-        old_priority = goal.priority
-        if action == 'complete':
-            # Change the priority of the goal to completed
-            goal.priority = 'completed'
-            goal.save()
-            messages.success(request, f'{old_priority.capitalize()} goal completed!')
-        elif action == 'delete':
-            # Delete the goal from the database
-            goal.delete()
-            messages.success(request, 'Goal deleted')
-        else:
-            # Check for unavailable action on goal
-            messages.warning(request, 'That action on a goal is not permitted')
-            return HttpResponseRedirect(reverse(f'capsule:view_goal', args=[old_priority]))
-        # Redirect the user to the goals page they were in
-        return HttpResponseRedirect(reverse(f'capsule:view_goal', args=[old_priority]))
-    # If goal no longer exists, inform the user and redirect them to main goals page
-    except ObjectDoesNotExist:
-        messages.success(request, 'That goal does not exist')
-        return HttpResponseRedirect(reverse('capsule:goals'))
+    # Get information from the goal passed to the function
+    goal = Goal.objects.get(pk=goal_id)
+    old_priority = goal.priority
+    if action == 'complete':
+        # Change the priority of the goal to completed
+        goal.priority = 'completed'
+        goal.save()
+        messages.success(request, f'{old_priority.capitalize()} goal completed!')
+    elif action == 'delete':
+        # Delete the goal from the database
+        goal.delete()
+        messages.success(request, 'Goal deleted.')
+    else:
+        # Check for unavailable action on goal
+        messages.warning(request, 'That action on a goal is not permitted')
+        return HttpResponseRedirect(reverse(f'capsule:goals', args=[old_priority]))
+    # Redirect the user to the goals page they were in
+    return HttpResponseRedirect(reverse(f'capsule:goals', args=[old_priority]))
 
 
 # Method for updating/deleting a project
 @login_required
 def change_project(request, project_id, action):
-    try:
-        # Get the user's input and validate it
-        form = AddProject(request.POST)
-        project = Project.objects.get(pk=project_id)
-        if form.is_valid() and action == 'update':
-            if form.cleaned_data['status'] in STATUS_CHOICES:
-                # Update the information in the database with new values
-                project.title = form.cleaned_data['title']
-                project.description = form.cleaned_data['description']
-                project.status = form.cleaned_data['status']
-                project.finish_date = form.cleaned_data['finish_date']
-                project.other_info = form.cleaned_data['other_info']
-                project.save()
-                messages.success(request, 'Project updated!')
-            # If input is not valid, inform the user
-            else:
-                messages.warning(request, 'Invalid input')
-            # Redirect user to specific project page
-            return HttpResponseRedirect(reverse('capsule:view_project', args=[project_id]))
-        elif action == 'delete':
-            # Delete the project from database and redirect user to projects page
-            project.delete()
-            messages.success(request, 'Project deleted!')
-            return HttpResponseRedirect(reverse('capsule:projects'))
-        # User requested another, unavailable action
+    # Get the user's input and validate it
+    form = AddProject(request.POST)
+    project = Project.objects.get(pk=project_id)
+    if form.is_valid() and action == 'update':
+        if form.cleaned_data['status'] in STATUS_CHOICES:
+            # Update the information in the database with new values
+            project.title = form.cleaned_data['title']
+            project.description = form.cleaned_data['description']
+            project.status = form.cleaned_data['status']
+            project.finish_date = form.cleaned_data['finish_date']
+            project.other_info = form.cleaned_data['other_info']
+            project.save()
+            messages.success(request, 'Project updated!')
+        # If input is not valid, inform the user
         else:
-            messages.warning(request, 'Action not permitted')
-            return HttpResponseRedirect(reverse('capsule:projects'))
-    # Else, project does not exist
-    except ObjectDoesNotExist:
-        messages.success(request, 'That project does not exist')
+            messages.warning(request, 'Invalid input')
+        # Redirect user to specific project page
+        return HttpResponseRedirect(reverse('capsule:view_project', args=[project_id]))
+    elif action == 'delete':
+        # Delete the project from database and redirect user to projects page
+        project.delete()
+        messages.success(request, 'Project deleted.')
+        return HttpResponseRedirect(reverse('capsule:projects'))
+    # User requested another, unavailable action
+    else:
+        messages.warning(request, 'Action not permitted')
         return HttpResponseRedirect(reverse('capsule:projects'))
 
 
@@ -122,12 +138,6 @@ def delete(request):
     Book.objects.filter(user_id=request.user.pk).delete()
     messages.success(request, 'Account deleted. We hope you enjoyed the site!')
     return HttpResponseRedirect(reverse('capsule:login'))
-
-
-# Render the template for user's goals
-@login_required
-def goals(request):
-    return render(request, 'capsule/goals.html')
 
 
 # Render a template with the user's journal entries
@@ -160,7 +170,7 @@ def library(request, book_id=''):
         # If the book is in user's library, delete it
         try:
             Book.objects.get(pk=book_id).delete()
-            messages.success(request, 'Book deleted!')
+            messages.success(request, 'Book deleted.')
         # Else, user does not own the book
         except Book.DoesNotExist:
             messages.warning(request, 'That book is not in your library')
@@ -314,7 +324,7 @@ def view_capsule(request, capsule_id):
     if request.method == 'POST':
         # Delete the capsule with the id provided
         MiniCapsule.objects.get(pk=capsule_id).delete()
-        messages.success(request, 'Mini time capsule deleted')
+        messages.success(request, 'Mini time capsule deleted.')
         return HttpResponseRedirect(reverse('capsule:mini_capsule'))
     # User reached via GET: render a template with the requested capsule
     return render(request, 'capsule/view_capsule.html', {
@@ -334,11 +344,12 @@ def view_entry(request, entry_id, action=''):
             entry.entry = request.POST['entry']
             entry.save()
             messages.success(request, f'{entry} updated!')
+            return HttpResponseRedirect(reverse('capsule:view_entry', args=[entry_id]))
         # Action is to delete the current journal entry
         elif action == 'delete':
             # Delete the entry from the database
             entry.delete()
-            messages.success(request, f'Entry deleted')
+            messages.success(request, f'Entry deleted.')
         # Check for attempt at other, unavailable action
         else:
             messages.warning(request, 'That action is not permitted')
@@ -353,7 +364,7 @@ def view_entry(request, entry_id, action=''):
 
 # Show the user's goals or add a new goal
 @login_required
-def view_goal(request, priority):
+def goals(request, priority='daily'):
     # User reached via POST, as by submitting a form to add a goal
     if request.method == 'POST':
         form = AddGoal(request.POST)
@@ -366,13 +377,13 @@ def view_goal(request, priority):
             new_goal.save()
             # Redirect the user to the specific goals page, informing of success
             messages.success(request, f'{priority.capitalize()} goal added!')
-            return HttpResponseRedirect(reverse('capsule:view_goal', args=[priority]))
+            return HttpResponseRedirect(reverse('capsule:goals', args=[priority]))
         # Else input was invalid, redirect user and inform them of this
         messages.warning(request, 'Invalid input')
-        return HttpResponseRedirect(reverse('capsule:view_goal', args=[priority]))
+        return HttpResponseRedirect(reverse('capsule:goals', args=[priority]))
     # Else, user reached via GET, as by clicking a link
     if priority in ['daily', 'weekly', 'monthly', 'long-term', 'completed']:
-        return render(request, 'capsule/view_goal.html', {
+        return render(request, 'capsule/goals.html', {
             'goals': Goal.objects.filter(user_id=request.user.pk, priority=priority),
             'priority': priority,
             'form': AddGoal()
@@ -390,12 +401,49 @@ def view_log(request, project_id, log_id):
     if request.method == 'POST':
         # Delete project log
         log.delete()
-        messages.success(request, f'{log} deleted')
+        messages.success(request, f'{log} deleted.')
         return HttpResponseRedirect(reverse('capsule:view_project', args=[project_id]))
     # User reached via GET: render template with log
     return render(request, 'capsule/log.html', {
         'log': log,
         'project_id': project_id
+    })
+
+
+# View a specific book note
+@login_required
+def view_note(request, note_id, action=''):
+    note = BookNote.objects.get(pk=note_id)
+    # User reached via POST, as by submitting a form to update/delete note
+    if request.method == 'POST':
+        # User requested to update note
+        if action == 'update':
+            form = addNote(request.POST)
+            if form.is_valid():
+                # Update the values of the fields in book notes table
+                note.title = form.cleaned_data['title']
+                note.note = form.cleaned_data['note']
+                note.note_type = form.cleaned_data['note_type']
+                note.save()
+                messages.success(request, f'{note} updated!')
+                return HttpResponseRedirect(reverse('capsule:view_note', args=[note_id]))
+        # User requested to delete note
+        elif action == 'delete':
+            # Delete note from database
+            note.delete()
+            messages.success(request, 'Note deleted.')
+        # Check for valid input
+        else:
+            messages.warning(request, 'That action is not permitted.')
+        return HttpResponseRedirect(reverse('capsule:book_notes', args=[note.book_id]))
+    # User reached via GET: render a template with requested book note
+    return render(request, 'capsule/view_note.html', {
+        'note': note,
+        'form': addNote(initial={
+            'title': note.title,
+            'note': note.note,
+            'note_type': note.note_type
+        })
     })
 
 

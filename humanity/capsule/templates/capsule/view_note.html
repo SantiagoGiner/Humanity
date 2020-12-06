@@ -1,0 +1,44 @@
+{% extends "capsule/layout.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block script %}
+    <script src="{% static 'capsule/script.js' %}"></script>
+{% endblock %}
+
+{% block title %} Note {% endblock %}
+
+{% block pageHeader %}
+    <h1>{{ note }}</h1> 
+{% endblock %}
+
+{% block body %}
+    <!-- Show the note as a paragraph -->
+    <p id="entry">
+        {{ note.note }}
+    </p>
+    <!-- Button to toggle the form to update the note -->
+    <button class="btn btn-primary mt-4" id="toggle_form">Update note</button>
+    <div id="form">
+        <!-- Form to update the note -->
+        <form action="{% url 'capsule:view_note' note.pk 'update' %}" method="post">
+            {% csrf_token %}
+            {{ form | crispy }}
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group mr-2" role="group" aria-label="First group">
+                    <button class="btn btn-primary my-2" type="submit">Update</button>
+                </div>
+                <div class="btn-group mr-2" role="group" aria-label="Second group">
+                    <button class="btn btn-secondary my-2" id="close" type="button">Close</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- Button to delete the note -->
+    <form action="{% url 'capsule:view_note' note.pk 'delete' %}" method="post">
+        {% csrf_token %}
+        <button class="btn btn-danger my-3">Delete note</button>
+    </form>
+    <!-- Link to go back to book page -->
+    <a class="btn btn-link my-4" href="{% url 'capsule:book_notes' note.book_id %}">Back to book</a>
+{% endblock %}

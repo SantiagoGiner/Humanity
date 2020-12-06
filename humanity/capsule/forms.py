@@ -60,3 +60,15 @@ class addMiniCapsule(forms.Form):
     content = forms.CharField(help_text='What would your future self to know?', widget=forms.Textarea)
     time = forms.DateField(help_text='When do you want to view this mini time capsule again?', 
                            widget=DateInput())
+
+
+# Form to add a book note
+class addNote(forms.Form):
+    TYPE_CHOICES = [
+        ('o', 'Opinion'),
+        ('s', 'Summary'),
+    ]
+    title = forms.CharField(help_text="What should be the title of your note?") 
+    note = forms.CharField(help_text="Write down your book note", widget=forms.Textarea)
+    note_type = forms.CharField(help_text='Is your note a personal opinion or a summary?', 
+                                widget=forms.Select(choices=TYPE_CHOICES))
