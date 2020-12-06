@@ -12,7 +12,7 @@
         <!-- Display the user's books as Bootstrap Cards -->
         <div class="card-columns">
             {% for book in books %}
-                <div class="card w-75 mx-3 my-1">
+                <div class="card w-75 mx-3 my-1 p-3">
                     <img class="card-img-top w-75 mx-auto" src="{{ book.cover_photo }}" alt="{{ book.pk }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ book.title }}</h5>
