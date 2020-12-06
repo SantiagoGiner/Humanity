@@ -1,7 +1,7 @@
 # Humanity
 Web application as part of the final project for Computer Science 50 at Harvard College
 
-# Login/Register
+# Account
 Have added functionality for registering, logging in, and logging out. To register, simply click the link and fill out the form with username, first name, last name, email, password, and password confirmation. Thereafter, log in with username and password and the page will rememeber the user currently logged in, until they click Log out.
 
 # Journal
