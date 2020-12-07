@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const query = document.getElementById('query').value;
         // Do an AJAX call to the Google Books API with the user's query
         $.ajax({
-            url: `https://www.googleapis.com/books/v1/volumes?q="${query}"`,
+            url: `https://www.googleapis.com/books/v1/volumes?q="${query}"&langRestrict=en`,
             dataType: 'json',
             // If the query is successful
             success: (data) => {
