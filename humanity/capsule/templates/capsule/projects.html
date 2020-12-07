@@ -56,7 +56,7 @@
                             </button>
                             </div>
                             <div class="modal-body">
-                                <form action="{% url 'capsule:projects' %}" method="post">
+                                <form action="{% url 'capsule:projects' %}" autocomplete="off" method="post">
                                     {% csrf_token %}
                                     {{ form | crispy }}
                                     <div class="modal-footer">

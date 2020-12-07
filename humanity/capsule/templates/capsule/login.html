@@ -9,9 +9,9 @@
 
 {% block body %}
     <!-- Display the login form -->
-    <form class="form-group" action="{% url 'capsule:login' %}" method="post">
+    <form action="{% url 'capsule:login' %}" autocomplete="off" method="post">
         {% csrf_token %}
-        {{ form | crispy}}
+        {{ form | crispy }}
         <button class="btn btn-success" type="submit">Login</button>
         <!-- Redirect the user to register if they do not have an account -->
         <p>Don't have an account? <a href="{% url 'capsule:register' %}">Create One</a></p>

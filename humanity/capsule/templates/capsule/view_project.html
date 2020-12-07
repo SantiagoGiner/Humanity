@@ -83,7 +83,7 @@
     </div>
     <hr>
     <!-- Button to toggle the form to update project information -->
-    <button class="btn btn-primary my-3" id="toggle_form">Click here to update project</button>
+    <button class="btn btn-primary my-3" id="toggle_form">Click here to update/delete project</button>
     <div id="form">
         <!-- Form to update the project information -->
         <form action="{% url 'capsule:change_project' project.pk 'update' %}" method="post" autocomplete="off">
@@ -92,7 +92,7 @@
             <button class="btn btn-success mb-2" type="submit">Update project</button>
             <button class="btn btn-secondary mb-4" id="close" type="button">Close</button>
         </form>
-        <form action="{% url 'capsule:change_project' project.pk 'delete' %}" method="post" autocomplete="off">
+        <form action="{% url 'capsule:change_project' project.pk 'delete' %}" autocomplete="off" method="post">
             {% csrf_token %}
             <button class="btn btn-danger my-2" type="submit">Delete project</button>
         </form>

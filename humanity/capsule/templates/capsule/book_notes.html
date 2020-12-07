@@ -40,7 +40,7 @@
                 </button>
                 </div>
                 <div class="modal-body">
-                    <form action="{% url 'capsule:book_notes' book.pk %}" method="post">
+                    <form action="{% url 'capsule:book_notes' book.pk %}" autocomplete="off" method="post">
                         {% csrf_token %}
                         {{ form | crispy }}
                         <div class="modal-footer">

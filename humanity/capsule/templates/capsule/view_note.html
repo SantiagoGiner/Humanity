@@ -21,7 +21,7 @@
     <button class="btn btn-primary mt-4" id="toggle_form">Update note</button>
     <div id="form">
         <!-- Form to update the note -->
-        <form action="{% url 'capsule:view_note' note.pk 'update' %}" method="post">
+        <form action="{% url 'capsule:view_note' note.pk 'update' %}" autocomplete="off" method="post">
             {% csrf_token %}
             {{ form | crispy }}
             <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">

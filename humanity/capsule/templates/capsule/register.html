@@ -9,7 +9,7 @@
 
 {% block body %}
     <!-- Display the form to register -->
-    <form class="form-group" action="{% url 'capsule:register' %}" method="post">
+    <form class="form-group" action="{% url 'capsule:register' %}" autocomplete="off" method="post">
         {% csrf_token %}
         {{ form | crispy }}
         <button class="btn btn-success" type="submit">Register</button>
