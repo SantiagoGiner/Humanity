@@ -17,7 +17,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ book.title }}</h5>
                         <h6 class="card-text">{{ book.authors }}</h6>
-                        <a class="btn btn-primary my-2" href="{% url 'capsule:book_notes' book.pk %}">Book notes</a>
+                        <a class="btn btn-primary my-2" href="{% url 'capsule:view_book' book.pk %}">View book</a>
                         <form action="{% url 'capsule:library' book.pk %}" method="post">
                             {% csrf_token %}
                             <button class="btn btn-danger my-2" type="submit">Delete</button>

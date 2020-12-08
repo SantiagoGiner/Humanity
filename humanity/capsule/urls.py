@@ -37,7 +37,7 @@ urlpatterns = [
     path('library/', views.library, name='library'),
     path('library/<int:book_id>', views.library, name='library'),
     path('library/add_book/', views.add_book, name='add_book'),
-    path('library/notes/<int:book_id>/', views.book_notes, name='book_notes'),
+    path('library/view_book/<int:book_id>/', views.view_book, name='view_book'),
     path('library/view_note/<int:note_id>/', views.view_note, name='view_note'),
     path('library/view_note/<int:note_id>/<str:action>', views.view_note, name='view_note')
 ]

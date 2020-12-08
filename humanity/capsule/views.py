@@ -46,7 +46,7 @@ def add_book(request):
 
 # Show the user's book and the relevant notes
 @login_required
-def book_notes(request, book_id):
+def view_book(request, book_id):
     # User reached via POST, as by submitting a form to add a note
     if request.method == 'POST':
         # Get user's input and validate it
@@ -60,10 +60,10 @@ def book_notes(request, book_id):
         else:
             messages.warning(request, 'Invalid input. Please try again.')
         # Redirect user to current book note page
-        return HttpResponseRedirect(reverse('capsule:book_notes', args=[book_id]))
+        return HttpResponseRedirect(reverse('capsule:view_book', args=[book_id]))
     # User reached via GET: find user's book and book notes and display them
     book = Book.objects.get(pk=book_id)
-    return render(request, 'capsule/book_notes.html', {
+    return render(request, 'capsule/view_book.html', {
         'book': book,
         'form': addNote(),
         'notes': BookNote.objects.filter(user_id=request.user.pk, book_id=book_id)
@@ -435,7 +435,7 @@ def view_note(request, note_id, action=''):
         # Check for valid input
         else:
             messages.warning(request, 'That action is not permitted.')
-        return HttpResponseRedirect(reverse('capsule:book_notes', args=[note.book_id]))
+        return HttpResponseRedirect(reverse('capsule:view_book', args=[note.book_id]))
     # User reached via GET: render a template with requested book note
     return render(request, 'capsule/view_note.html', {
         'note': note,

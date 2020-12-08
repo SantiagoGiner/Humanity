@@ -40,5 +40,5 @@
         <button class="btn btn-danger my-3">Delete note</button>
     </form>
     <!-- Link to go back to book page -->
-    <a class="btn btn-link my-4" href="{% url 'capsule:book_notes' note.book_id %}">Back to book</a>
+    <a class="btn btn-link my-4" href="{% url 'capsule:view_book' note.book_id %}">Back to book</a>
 {% endblock %}
