@@ -9,10 +9,18 @@
 
 {% block body %}
     <!-- Display the book's information -->
-    <img class="rounded mx-auto d-block" src="{{ book.cover_photo }}">
+    {% if book.cover_photo %}
+        <img alt="No cover photo found" class="rounded mx-auto d-block" src="{{ book.cover_photo }}">
+    {% else %}
+        <p class="general_info" style="color:#ff0000">No book cover found</p>
+    {% endif %}
     <h5 class="general_info">Author(s): {{ book.authors }}</h5>
     <h5 class="general_info">Description:</h5>
-    <p class="general_info">{{ book.description }}</p> 
+    {% if book.description %}
+        <p class="general_info">{{ book.description }}</p> 
+    {% else %}
+        <p class="general_info" style="color:#ff0000">No book description found</p> 
+    {% endif %}
     <hr>
     <h2 class="h2 mb-3">{{ user.first_name }}'s Notes</h2>
     {% if notes %}

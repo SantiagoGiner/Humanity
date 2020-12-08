@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const query = document.getElementById('query').value;
         // Do an AJAX call to the Google Books API with the user's query
         $.ajax({
-            url: `https://www.googleapis.com/books/v1/volumes?q="${query}"&langRestrict=en`,
+            url: `https://www.googleapis.com/books/v1/volumes?q="${query}"&langRestrict=en&key=AIzaSyDELF8MtiIWbSsCTypDl_ApypKcs4HcPX8`,
             dataType: 'json',
             // If the query is successful
             success: (data) => {
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // If there is a description, save it as a hidden input in the form
                         if (data.items[i].volumeInfo.description != undefined) {
                             html += `<input name="description" style="display:none;" 
-                                    value=${JSON.stringify(data.items[i].volumeInfo.description)}>`;
+                                       value=${JSON.stringify(data.items[i].volumeInfo.description)}>`;
                         }
                         // Add the select button and end the form
                         html += `<button class="btn btn-success mx-2" type="submit">Select</button>`;

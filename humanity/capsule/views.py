@@ -44,32 +44,6 @@ def add_book(request):
     return render(request, 'capsule/add_book.html')
 
 
-# Show the user's book and the relevant notes
-@login_required
-def view_book(request, book_id):
-    # User reached via POST, as by submitting a form to add a note
-    if request.method == 'POST':
-        # Get user's input and validate it
-        form = addNote(request.POST)
-        if form.is_valid() and form.cleaned_data['note_type'] in TYPE_CHOICES:
-            # Add the book note to the BookNote table
-            BookNote(user_id=request.user.pk, book_id=book_id, title=form.cleaned_data['title'],
-                     note=form.cleaned_data['note'], note_type=form.cleaned_data['note_type']).save()
-            messages.success(request, 'Book note added!')
-        # If input was invalid, inform user so
-        else:
-            messages.warning(request, 'Invalid input. Please try again.')
-        # Redirect user to current book note page
-        return HttpResponseRedirect(reverse('capsule:view_book', args=[book_id]))
-    # User reached via GET: find user's book and book notes and display them
-    book = Book.objects.get(pk=book_id)
-    return render(request, 'capsule/view_book.html', {
-        'book': book,
-        'form': addNote(),
-        'notes': BookNote.objects.filter(user_id=request.user.pk, book_id=book_id)
-    })
-
-
 # Mark a goal as completed or delete it entirely
 @login_required
 def change_goal(request, goal_id, action):
@@ -148,8 +122,7 @@ def journal(request):
         form = AddJournalEntry(request.POST)
         # Validate the user's input in the form and add a journal entry to their journal
         if form.is_valid():
-            new_entry = JournalEntry(user_id=request.user.pk, entry=form.cleaned_data['entry'])
-            new_entry.save()
+            JournalEntry(user_id=request.user.pk, entry=form.cleaned_data['entry']).save()
             messages.success(request, 'Journal entry added!')
             return HttpResponseRedirect(reverse('capsule:journal'))
         # If an error occured, redirect them to add entry again
@@ -317,6 +290,32 @@ def register(request):
     })
 
 
+# Show the user's book and the relevant notes
+@login_required
+def view_book(request, book_id):
+    # User reached via POST, as by submitting a form to add a note
+    if request.method == 'POST':
+        # Get user's input and validate it
+        form = addNote(request.POST)
+        if form.is_valid() and form.cleaned_data['note_type'] in TYPE_CHOICES:
+            # Add the book note to the BookNote table
+            BookNote(user_id=request.user.pk, book_id=book_id, title=form.cleaned_data['title'],
+                     note=form.cleaned_data['note'], note_type=form.cleaned_data['note_type']).save()
+            messages.success(request, 'Book note added!')
+        # If input was invalid, inform user so
+        else:
+            messages.warning(request, 'Invalid input. Please try again.')
+        # Redirect user to current book note page
+        return HttpResponseRedirect(reverse('capsule:view_book', args=[book_id]))
+    # User reached via GET: find user's book and book notes and display them
+    book = Book.objects.get(pk=book_id)
+    return render(request, 'capsule/view_book.html', {
+        'book': book,
+        'form': addNote(),
+        'notes': BookNote.objects.filter(user_id=request.user.pk, book_id=book_id)
+    })
+
+
 # View or delete a mini time capsule
 @login_required
 def view_capsule(request, capsule_id):
@@ -372,9 +371,8 @@ def goals(request, priority='daily'):
         if form.is_valid():
             title = form.cleaned_data['title']
             description = form.cleaned_data['description']
-            new_goal = Goal(user_id=request.user.pk, title=title, 
-                            description=description, priority=priority)
-            new_goal.save()
+            Goal(user_id=request.user.pk, title=title, 
+                 description=description, priority=priority).save()
             # Redirect the user to the specific goals page, informing of success
             messages.success(request, f'{priority.capitalize()} goal added!')
             return HttpResponseRedirect(reverse('capsule:goals', args=[priority]))
@@ -455,10 +453,9 @@ def view_project(request, project_id):
         # Get user's input and validate it
         form = addProjectLog(request.POST)
         if form.is_valid():
-            log = ProjectLog(user_id=request.user.pk, project_id=project_id,
-                             log=form.cleaned_data['log'])
             # Save the log in the database
-            log.save()
+            ProjectLog(user_id=request.user.pk, project_id=project_id,
+                       log=form.cleaned_data['log']).save()
             messages.success(request, 'Project log added!')
             return HttpResponseRedirect(reverse('capsule:view_project', args=[project_id]))
     # User reached via GET: render a template with the project information

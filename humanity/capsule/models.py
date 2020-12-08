@@ -109,9 +109,9 @@ class Book(models.Model):
     user_id = models.IntegerField()
     title = models.CharField(max_length=200)
     authors = models.CharField(max_length=200)
-    cover_photo = models.URLField(max_length=300, blank=True)
-    description = models.TextField()
-    notes = models.TextField(blank=True)
+    cover_photo = models.URLField(max_length=300, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
 
     # Order the books by date added
