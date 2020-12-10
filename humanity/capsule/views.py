@@ -27,7 +27,7 @@ def object_required(f):
         # If object requested is not found, redirect user and inform them so
         except ObjectDoesNotExist:
             messages.warning(request, 'Seems like that object does not exist. Please try again.')
-            return HttpResponseRedirect(reverse('capsule:journal'))
+            return HttpResponseRedirect(reverse('capsule:index'))
     return decorated_function
 
 
