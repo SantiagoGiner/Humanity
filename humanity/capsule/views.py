@@ -1,5 +1,7 @@
 from datetime import date
+from functools import wraps
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -14,6 +16,19 @@ from .models import *
 
 STATUS_CHOICES = ['i', 'c', 's']
 TYPE_CHOICES = ['o', 's']
+
+
+# Decorator that handles exception if an object is not found in the database
+def object_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        # If object requested is not found, redirect user and inform them so
+        except ObjectDoesNotExist:
+            messages.warning(request, 'Seems like that object does not exist. Please try again.')
+            return HttpResponseRedirect(reverse('capsule:journal'))
+    return decorated_function
 
 
 # Render the home page
@@ -46,6 +61,7 @@ def add_book(request):
 
 # Mark a goal as completed or delete it entirely
 @login_required
+@object_required
 def change_goal(request, goal_id, action):
     # Get information from the goal passed to the function
     goal = Goal.objects.get(pk=goal_id)
@@ -69,6 +85,7 @@ def change_goal(request, goal_id, action):
 
 # Method for updating/deleting a project
 @login_required
+@object_required
 def change_project(request, project_id, action):
     # Get the user's input and validate it
     form = AddProject(request.POST)
@@ -116,6 +133,7 @@ def delete(request):
 
 # Render a template with the user's journal entries
 @login_required
+@object_required
 def journal(request):
     # User reached via POST, as by submitting the add entry form
     if request.method == 'POST':
@@ -137,6 +155,8 @@ def journal(request):
 
 # Display the user's books
 @login_required
+@object_required
+# @object_required
 def library(request, book_id=''):
     # User reached via POST, as by clicking a button to delete a book
     if request.method == 'POST':
@@ -244,12 +264,10 @@ def projects(request):
             finish_date = form.cleaned_data['finish_date']
             status = form.cleaned_data['status']
             other_info = form.cleaned_data['other_info']
-            # Ensure status is valid
+            # Ensure status is valid and save new project
             if status in STATUS_CHOICES:
-                new_project = Project(user_id=request.user.pk, title=title, description=description,
-                                      finish_date=finish_date, status=status, other_info=other_info)
-                # Save the project and redirect user
-                new_project.save()
+                Project(user_id=request.user.pk, title=title, description=description,
+                        finish_date=finish_date, status=status, other_info=other_info).save()
                 messages.success(request, f'{title} added to your projects!')
                 return HttpResponseRedirect(reverse('capsule:projects'))
             # Else, status was not valid
@@ -292,6 +310,7 @@ def register(request):
 
 # Show the user's book and the relevant notes
 @login_required
+@object_required
 def view_book(request, book_id):
     # User reached via POST, as by submitting a form to add a note
     if request.method == 'POST':
@@ -318,6 +337,7 @@ def view_book(request, book_id):
 
 # View or delete a mini time capsule
 @login_required
+@object_required
 def view_capsule(request, capsule_id):
     # User reached via POST, as by submitting a form to delete the mini capsule
     if request.method == 'POST':
@@ -333,6 +353,7 @@ def view_capsule(request, capsule_id):
 
 # View a journal entry
 @login_required
+@object_required
 def view_entry(request, entry_id, action=''):
     # User reached via POST, as by submitting a form to update entry
     entry = JournalEntry.objects.get(pk=entry_id)
@@ -363,6 +384,7 @@ def view_entry(request, entry_id, action=''):
 
 # Show the user's goals or add a new goal
 @login_required
+@object_required
 def goals(request, priority='daily'):
     # User reached via POST, as by submitting a form to add a goal
     if request.method == 'POST':
@@ -393,6 +415,7 @@ def goals(request, priority='daily'):
 
 # View of project log
 @login_required
+@object_required
 def view_log(request, project_id, log_id):
     log = ProjectLog.objects.get(pk=log_id)
     # User reached via POST, as by submitting the form to delete a log
@@ -410,6 +433,7 @@ def view_log(request, project_id, log_id):
 
 # View a specific book note
 @login_required
+@object_required
 def view_note(request, note_id, action=''):
     note = BookNote.objects.get(pk=note_id)
     # User reached via POST, as by submitting a form to update/delete note
@@ -447,6 +471,7 @@ def view_note(request, note_id, action=''):
 
 # View of a specific project
 @login_required
+@object_required
 def view_project(request, project_id):
     # User reached via POST, as by submitting a form to add a log
     if request.method == 'POST':
