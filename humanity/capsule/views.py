@@ -47,7 +47,7 @@ def add_book(request):
         if Book.objects.filter(user_id=request.user.pk, title=request.POST['title']):
             messages.warning(request, f'{request.POST["title"]} is already in your library')
             # Redirect the user to add another
-            return HttpResponseRedirect(reverse('capsule:add_book'))
+            return HttpResponseRedirect(reverse('capsule:library'))
         # If book is not in user's library, then add it
         Book(user_id=request.user.pk, title=request.POST['title'], authors=request.POST['author'],
                 cover_photo=request.POST['cover'], description=request.POST.get('description')).save()
