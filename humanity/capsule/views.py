@@ -26,7 +26,7 @@ def object_required(f):
             return f(*args, **kwargs)
         # If object requested is not found, redirect user and inform them so
         except ObjectDoesNotExist:
-            messages.warning(request, 'Seems like that object does not exist. Please try again.')
+            messages.warning(args[0], 'Seems like that object does not exist. Please try again.')
             return HttpResponseRedirect(reverse('capsule:index'))
     return decorated_function
 
@@ -43,18 +43,16 @@ def index(request):
 def add_book(request):
     # User reached via POST, as by submitting a form to add a book
     if request.method == 'POST':
-        try:
-            # If book is already in Book table, then user already owns it
-            if Book.objects.get(user_id=request.user.pk, title=request.POST['title']):
-                messages.warning(request, f'{request.POST["title"]} is already in your library')
-                # Redirect the user to add another
-                return HttpResponseRedirect(reverse('capsule:add_book'))
+        # Check if user already owns the book
+        if Book.objects.filter(user_id=request.user.pk, title=request.POST['title']):
+            messages.warning(request, f'{request.POST["title"]} is already in your library')
+            # Redirect the user to add another
+            return HttpResponseRedirect(reverse('capsule:add_book'))
         # If book is not in user's library, then add it
-        except Book.DoesNotExist:
-            Book(user_id=request.user.pk, title=request.POST['title'], authors=request.POST['author'],
-                 cover_photo=request.POST['cover'], description=request.POST.get('description')).save()
-            messages.success(request, f'{request.POST["title"]} was added to your library!')
-            return HttpResponseRedirect(reverse('capsule:library'))
+        Book(user_id=request.user.pk, title=request.POST['title'], authors=request.POST['author'],
+                cover_photo=request.POST['cover'], description=request.POST.get('description')).save()
+        messages.success(request, f'{request.POST["title"]} was added to your library!')
+        return HttpResponseRedirect(reverse('capsule:library'))
     # Else, user reached via GET: render a template to search for new books
     return render(request, 'capsule/add_book.html')
 
@@ -67,6 +65,10 @@ def change_goal(request, goal_id, action):
     goal = Goal.objects.get(pk=goal_id)
     old_priority = goal.priority
     if action == 'complete':
+        # Check if goal has already been completed
+        if old_priority == 'completed':
+            messages.warning(request, 'That goal has already been completed')
+            return HttpResponseRedirect(reverse('capsule:goals', args=['completed']))
         # Change the priority of the goal to completed
         goal.priority = 'completed'
         goal.save()
@@ -140,6 +142,9 @@ def journal(request):
         form = AddJournalEntry(request.POST)
         # Validate the user's input in the form and add a journal entry to their journal
         if form.is_valid():
+            if JournalEntry.objects.filter(user_id=request.user.pk, entry=form.cleaned_data['entry']):
+                messages.warning(request, 'That entry already exists')
+                return HttpResponseRedirect(reverse('capsule:journal'))
             JournalEntry(user_id=request.user.pk, entry=form.cleaned_data['entry']).save()
             messages.success(request, 'Journal entry added!')
             return HttpResponseRedirect(reverse('capsule:journal'))
@@ -219,6 +224,9 @@ def mini_capsule(request):
         if form.is_valid():
             content = form.cleaned_data['content']
             time = form.cleaned_data['time']
+            if MiniCapsule.objects.filter(user_id=request.user.pk, content=content,time=time):
+                messages.warning(request, 'That mini time capsule already exists')
+                return HttpResponseRedirect(reverse('capsule:mini_capsule'))
             # Save the capsule and redirect user
             MiniCapsule(user_id=request.user.pk, content=content, time=time).save()
             messages.success(request, f'Mini time capsule added! It will be visible again on {time}')
@@ -264,6 +272,10 @@ def projects(request):
             finish_date = form.cleaned_data['finish_date']
             status = form.cleaned_data['status']
             other_info = form.cleaned_data['other_info']
+            # Check if project already exists
+            if Project.objects.filter(user_id=request.user.pk, title=title):
+                messages.warning(request, 'That project already exists')
+                return HttpResponseRedirect(reverse('capsule:projects'))
             # Ensure status is valid and save new project
             if status in STATUS_CHOICES:
                 Project(user_id=request.user.pk, title=title, description=description,
@@ -393,6 +405,9 @@ def goals(request, priority='daily'):
         if form.is_valid():
             title = form.cleaned_data['title']
             description = form.cleaned_data['description']
+            if Goal.objects.filter(user_id=request.user.pk, title=title):
+                messages.warning(request, 'That goal has already been added')
+                return HttpResponseRedirect(reverse('capsule:goals', args=[priority]))
             Goal(user_id=request.user.pk, title=title, 
                  description=description, priority=priority).save()
             # Redirect the user to the specific goals page, informing of success
