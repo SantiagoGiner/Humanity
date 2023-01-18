@@ -1,5 +1,12 @@
 # Humanity
-Hello, my name is Santiago Giner and I am a first-year student at Harvard College planning to concentrate in physics. This is my final project for the course CS50. It is a web application designed with the Django framework and is intended for users of every age. The main objective of the project is to provide people with the chance to record their life's journey. In order to do this, the website has several different features that allow for things like keeping track of goals, projects, and books the user is reading, journaling, or even writing messages to your future self. It is now, in 2020, more important than ever to find times to focus on what really matters to you, to do the things you like, and to accomplish the goals you have. I hope this time capsule can aid you in doing that.
+
+Check out a [video](https://youtu.be/LoPxcdcfaLc) I made going over the main features of the web app!
+
+[![Humanity - A Web App](https://img.youtube.com/vi/LoPxcdcfaLc/0.jpg)](https://youtu.be/LoPxcdcfaLc)
+
+<hr>
+
+Hello, my name is Santiago Giner and I am a student at Harvard College concentrating in physics and computer science. This is my final project for the course CS50. It is a web application designed with the Django framework and is intended for users of every age. The main objective of the project is to provide people with the chance to record their life's journey. In order to do this, the website has several different features that allow for things like keeping track of goals, projects, and books the user is reading, journaling, or even writing messages to your future self. It is now, in 2020, more important than ever to find times to focus on what really matters to you, to do the things you like, and to accomplish the goals you have. I hope this time capsule can aid you in doing that.
 
 ## Heroku
 Humanity has also been deployed to the Heroku cloud platform, where it can be accessed anytime and anywhere as long as the user has an internet connection. The link to the website is: https://humanityproject.herokuapp.com/
